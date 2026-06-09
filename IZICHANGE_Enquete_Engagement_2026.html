@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enquête Engagement — IZICHANGE 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f6f9;color:#222;min-height:100vh}
+.wrap{max-width:660px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.screen{display:none}.screen.active{display:block}
+.card{background:#fff;border:1px solid #e0e6f0;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+button{font-family:Arial,sans-serif;cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#222;font-size:13px;font-weight:600;transition:background .15s}
+.btn:hover{background:#f0f0f0}
+.navy{background:#1B3A6B!important;color:#fff!important;border-color:#1B3A6B!important}
+.navy:hover{background:#2E5499!important}
+.green-b{background:#0F6E56!important;color:#fff!important;border-color:#0F6E56!important}
+.red-b{background:#A32D2D!important;color:#fff!important;border-color:#A32D2D!important}
+.inp{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #ccc;font-size:13px;font-family:Arial,sans-serif;background:#f8f9fb}
+.inp:focus{outline:none;border-color:#1B3A6B}
+.prog{height:5px;background:#e0e6f0;border-radius:3px;overflow:hidden;margin-bottom:1.25rem}
+.pfill{height:100%;background:#1B3A6B;border-radius:3px;transition:width .4s}
+.ql{font-size:14px;font-weight:600;margin-bottom:.75rem;line-height:1.5;color:#111}
+.qh{font-size:11px;color:#888;margin-bottom:.5rem}
+.sr{display:flex;gap:6px;flex-wrap:wrap}
+.sb{flex:1;min-width:36px;max-width:56px;height:40px;border-radius:8px;border:1px solid #ccc;background:#f8f9fb;font-size:13px;font-weight:600;color:#888;cursor:pointer;transition:all .15s;font-family:Arial,sans-serif}
+.sb:hover,.sb.on{background:#1B3A6B;color:#fff;border-color:#1B3A6B}
+.yb{flex:1;height:40px;border-radius:8px;border:1px solid #ccc;background:#f8f9fb;font-size:12px;color:#888;cursor:pointer;transition:all .15s;font-family:Arial,sans-serif}
+.yb.on{background:#1B3A6B;color:#fff;border-color:#1B3A6B}
+.eb{flex:1;padding:10px 4px;border-radius:8px;border:1px solid #ccc;background:#f8f9fb;cursor:pointer;font-size:20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .15s;font-family:Arial,sans-serif}
+.eb span{font-size:10px;color:#888}
+.eb.on{border-color:#1B3A6B;background:#E8EEF7}
+.mb{padding:9px 12px;border-radius:8px;border:1px solid #ccc;background:#f8f9fb;cursor:pointer;font-size:12px;color:#888;text-align:left;transition:all .15s;font-family:Arial,sans-serif}
+.mb.on{background:#E8EEF7;border-color:#1B3A6B;color:#1B3A6B;font-weight:600}
+.oa{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #ccc;background:#f8f9fb;font-size:13px;color:#222;resize:vertical;min-height:80px;font-family:Arial,sans-serif}
+.oa:focus{outline:none;border-color:#1B3A6B}
+.nav{display:flex;justify-content:space-between;align-items:center;padding-top:1rem;margin-top:1rem;border-top:1px solid #e8eef0}
+.stag{display:inline-block;font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;margin-bottom:8px;background:#E8EEF7;color:#1B3A6B}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:1rem}
+.sc{background:#fff;border:1px solid #e0e6f0;border-radius:10px;padding:12px;text-align:center}
+.sn{font-size:22px;font-weight:700;line-height:1.1}
+.sl{font-size:10px;color:#888;margin-top:3px}
+.tbr{display:flex;border-bottom:1px solid #e0e6f0;margin-bottom:1rem;overflow-x:auto;gap:0}
+.tbb{padding:9px 13px;font-size:12px;cursor:pointer;border:none;background:none;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-family:Arial,sans-serif;font-weight:600}
+.tbb.on{color:#1B3A6B;border-bottom-color:#1B3A6B}
+.tc{display:none}.tc.on{display:block}
+.ri{border-left:3px solid;padding:10px 14px;margin-bottom:8px;background:#f9f9f9;border-radius:0 8px 8px 0}
+.rt{font-size:12px;font-weight:700;margin-bottom:2px}
+.rb{font-size:11px;color:#666;line-height:1.5}
+.oqc{margin-bottom:6px;padding:9px 12px;background:#f8f9fb;border-radius:8px;font-size:12px;line-height:1.5;border:1px solid #eee}
+.lbox{padding:10px 14px;border-radius:8px;border:1px solid #ccc;background:#f8f9fb;font-size:11px;color:#666;word-break:break-all;margin-bottom:.75rem;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ACCUEIL -->
+<div id="s-welcome" class="screen active">
+  <div class="card" style="text-align:center;padding:2.5rem 2rem">
+    <div style="font-size:36px;margin-bottom:1rem">👋</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:.25rem">Enquête d'engagement</div>
+    <div style="font-size:12px;color:#888;margin-bottom:.75rem">IZICHANGE · 2026 · Confidentiel</div>
+    <div style="font-size:13px;color:#666;max-width:360px;margin:0 auto 1.5rem;line-height:1.6">Vos réponses sont confidentielles et contribuent directement à améliorer votre quotidien au travail. Comptez environ 5 minutes.</div>
+    <div style="display:flex;flex-direction:column;gap:9px;max-width:300px;margin:0 auto">
+      <label style="font-size:12px;font-weight:700;text-align:left">Nom et prénom *</label>
+      <input id="inp-name" type="text" placeholder="Ex : Kofi Mensah" class="inp">
+      <label style="font-size:12px;font-weight:700;text-align:left;margin-top:4px">Département *</label>
+      <select id="inp-dept" class="inp">
+        <option value="">Sélectionner...</option>
+        <option>Ressources Humaines</option><option>Operations</option>
+        <option>AML &amp; Compliance</option><option>Finance</option>
+        <option>Marketing &amp; Communication</option><option>Tech</option>
+        <option>Stratégie &amp; Innovation</option><option>Direction</option>
+      </select>
+      <button id="btn-start" class="btn navy" style="margin-top:.75rem;justify-content:center;width:100%;padding:11px 16px;font-size:14px">Commencer le questionnaire →</button>
+    </div>
+    <div style="margin-top:2rem;padding-top:1.25rem;border-top:1px solid #eee">
+      <button id="btn-rh" class="btn" style="font-size:11px;color:#888">🔒 Accès RH</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div id="s-pin" class="screen">
+  <div class="card" style="text-align:center;padding:2.5rem 2rem;max-width:340px;margin:0 auto">
+    <div style="font-size:32px;margin-bottom:1rem">🔒</div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:.25rem">Accès RH sécurisé</div>
+    <div style="font-size:12px;color:#888;margin-bottom:1.5rem">Réservé à la Direction des Ressources Humaines</div>
+    <input id="pin-inp" type="password" maxlength="4" placeholder="••••" class="inp" style="text-align:center;font-size:24px;letter-spacing:10px;font-weight:700;margin-bottom:.5rem">
+    <div id="pin-err" style="font-size:12px;color:#A32D2D;margin-bottom:.75rem;display:none">Code incorrect. Réessayez.</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:1rem">
+      <button id="btn-pin-cancel" class="btn">Annuler</button>
+      <button id="btn-pin-ok" class="btn navy">Accéder →</button>
+    </div>
+    <div style="font-size:10px;color:#aaa;margin-top:1.25rem">Code par défaut : <strong>2026</strong> — modifiable dans les paramètres</div>
+  </div>
+</div>
+
+<!-- QUESTIONNAIRE -->
+<div id="s-survey" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">
+    <span id="sec-lbl" style="font-size:11px;font-weight:700;color:#888"></span>
+    <span id="step-ctr" style="font-size:11px;color:#aaa"></span>
+  </div>
+  <div class="prog"><div class="pfill" id="pfill"></div></div>
+  <div class="card">
+    <div id="q-area"></div>
+    <div class="nav">
+      <button id="btn-prev" class="btn">← Précédent</button>
+      <button id="btn-next" class="btn navy">Suivant →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MERCI -->
+<div id="s-thanks" class="screen">
+  <div class="card" style="text-align:center;padding:2.5rem 2rem">
+    <div style="font-size:36px;margin-bottom:1rem">✅</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:.5rem">Merci pour votre participation !</div>
+    <div style="font-size:13px;color:#666;max-width:360px;margin:0 auto 1.5rem;line-height:1.6">Vos réponses ont bien été enregistrées. La Direction RH les analysera et vous communiquera les actions mises en place.</div>
+    <button id="btn-thanks-back" class="btn navy">← Retour à l'accueil</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="s-dashboard" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:18px;font-weight:700">Tableau de bord RH</div>
+      <div style="font-size:11px;color:#888">IZICHANGE · Enquête d'engagement 2026</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button id="btn-excel" class="btn green-b">⬇ Excel</button>
+      <button id="btn-pdf" class="btn navy">⬇ PDF</button>
+      <button id="btn-logout" class="btn" style="font-size:12px">Déconnexion</button>
+    </div>
+  </div>
+  <div class="sg" id="stat-grid"></div>
+  <div class="tbr" id="tab-bar">
+    <button class="tbb on" data-tab="scores">Scores</button>
+    <button class="tbb" data-tab="recos">Recommandations</button>
+    <button class="tbb" data-tab="reponses">Réponses libres</button>
+    <button class="tbb" data-tab="individuel">Par collaborateur</button>
+    <button class="tbb" data-tab="lien">Lien &amp; Paramètres</button>
+  </div>
+  <div id="tab-scores" class="tc on"><div class="card" id="c-scores"></div></div>
+  <div id="tab-recos" class="tc"><div id="c-recos"></div></div>
+  <div id="tab-reponses" class="tc"><div class="card" id="c-reponses"></div></div>
+  <div id="tab-individuel" class="tc"><div class="card" id="c-individuel" style="overflow-x:auto"></div></div>
+  <div id="tab-lien" class="tc"><div class="card" id="c-lien"></div></div>
+</div>
+
+</div>
+
+<script>
+var SK='izi_eng_2026_v4';
+var gPin='2026',gResp=[],gCur=0,gAns={},gName='',gDept='';
+
+var THEMES=[
+  {label:'Environnement',keys:['q1','q2','q3','q4','q5']},
+  {label:'Équipe',keys:['q6','q7','q8']},
+  {label:'Développement',keys:['q9','q10','q11']},
+  {label:'Communication',keys:['q12','q13','q14']},
+  {label:'Strat./Projets',keys:['q17','q18','q19']},
+  {label:'Management',keys:['q20','q21','q22']}
+];
+var MOT=['Autonomie','Mission & valeurs','Mon équipe','Évolution','Rémunération','Apprentissage','Impact concret','Ambiance','Reconnaissance','Innovation'];
+var EMOS=['😞','😐','🙂','😄','🤩'];
+var ELBL=['Pas bien','Peut aller','Bien','Très bien','Excellent'];
+var QS=[
+  {id:'q0',s:'Ressenti global',t:'emoji',l:'En ce moment, comment vous sentez-vous au travail ?',o:['😞 Pas bien','😐 Ça peut aller','🙂 Bien','😄 Très bien','🤩 Excellent !']},
+  {id:'q1',s:'Environnement',t:'s5',l:'Je dispose des outils et ressources nécessaires pour accomplir mes missions.'},
+  {id:'q2',s:'Environnement',t:'s5',l:"L'environnement de travail est sain, positif et propice à la motivation."},
+  {id:'q3',s:'Environnement',t:'s5',l:'Mon travail est stimulant et a du sens pour moi.'},
+  {id:'q4',s:'Environnement',t:'s5',l:"Je suis fier(e) de faire partie d'IZICHANGE."},
+  {id:'q5',s:'Environnement',t:'s5',l:"J'ai une compréhension claire de la vision et des objectifs d'IZICHANGE."},
+  {id:'q6',s:"Travail d'équipe",t:'s5',l:'Je collabore régulièrement avec mes collègues pour atteindre les objectifs communs.'},
+  {id:'q7',s:"Travail d'équipe",t:'s5',l:"Je peux solliciter librement l'aide ou les conseils de mes pairs."},
+  {id:'q8',s:"Travail d'équipe",t:'s5',l:"L'ambiance et la cohésion au sein de mon équipe sont bonnes."},
+  {id:'q9',s:'Développement',t:'s5',l:"J'ai accès à des opportunités concrètes de développement professionnel."},
+  {id:'q10',s:'Développement',t:'s5',l:'Mon plan de carrière est discuté régulièrement avec mon supérieur.'},
+  {id:'q11',s:'Développement',t:'s5',l:"Je me sens libre de prendre des initiatives dans l'intérêt de l'entreprise."},
+  {id:'q12',s:'Communication',t:'s5',l:'Je reçois régulièrement des retours constructifs de mes supérieurs.'},
+  {id:'q13',s:'Communication',t:'s5',l:'Je me sens libre de proposer des idées nouvelles auprès de la direction.'},
+  {id:'q14',s:'Communication',t:'s5',l:'Les décisions de la direction sont communiquées de façon claire et cohérente.'},
+  {id:'q15',s:'Flexibilité',t:'yn',l:'Je maintiens un bon équilibre entre vie professionnelle et personnelle.',o:['Oui','Plutôt oui','Plutôt non','Non']},
+  {id:'q16',s:'Flexibilité',t:'yn',l:'Les règles et politiques internes sont équitables et appliquées à tous.',o:['Oui','Plutôt oui','Plutôt non','Non']},
+  {id:'q17',s:'Implication stratégique',t:'s5',l:"Je m'implique activement dans les projets et la croissance d'IZICHANGE."},
+  {id:'q18',s:'Implication stratégique',t:'s5',l:"Je propose régulièrement des idées innovantes ou des pistes d'amélioration."},
+  {id:'q19',s:'Implication stratégique',t:'s5',l:"Je suis motivé(e) et engagé(e) envers les objectifs globaux d'IZICHANGE."},
+  {id:'q20',s:'Management',t:'s5',l:'Mon manager communique de façon claire et efficace.'},
+  {id:'q21',s:'Management',t:'s5',l:'Mon manager soutient mon développement professionnel.'},
+  {id:'q22',s:'Management',t:'s5',l:'Mon manager me donne des retours constructifs et réguliers.'},
+  {id:'q23',s:'Engagement global',t:'nps',l:'Sur une échelle de 0 à 10, recommanderiez-vous IZICHANGE comme lieu de travail à un proche ?'},
+  {id:'q24',s:'Engagement global',t:'mot',l:"Qu'est-ce qui vous motive le plus en ce moment chez IZICHANGE ?",o:MOT},
+  {id:'q25',s:'Engagement global',t:'open',l:'Si vous pouviez changer une seule chose dans votre quotidien au travail, ce serait quoi ?'},
+  {id:'q26',s:'Engagement global',t:'open',l:"Qu'est-ce qu'IZICHANGE fait bien et que vous ne voudriez pas voir changer ?"}
+];
+
+/* —— STORAGE (localStorage fallback) —— */
+function load(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(raw){var d=JSON.parse(raw);gResp=d.responses||[];gPin=d.pin||'2026';}
+  }catch(e){gResp=[];}
+}
+function save(){
+  try{localStorage.setItem(SK,JSON.stringify({responses:gResp,pin:gPin}));}catch(e){}
+}
+
+/* —— NAV —— */
+function goTo(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById('s-'+id).classList.add('active');window.scrollTo(0,0);}
+function avg(a){var v=a.filter(function(x){return x!=null&&!isNaN(x);});return v.length?v.reduce(function(a,b){return a+b;},0)/v.length:null;}
+function col(s){return s>=4?'#0F6E56':s>=3?'#854F0B':'#A32D2D';}
+function thSc(resp,t){var v=resp.reduce(function(a,r){return a.concat(t.keys.map(function(k){return r.a[k];}).filter(function(v){return v!=null;}));}, []);return avg(v);}
+
+/* —— EVENTS —— */
+document.getElementById('btn-start').addEventListener('click',function(){
+  var n=document.getElementById('inp-name').value.trim();
+  var d=document.getElementById('inp-dept').value;
+  if(!n||!d){alert('Veuillez renseigner votre nom et votre département.');return;}
+  gName=n;gDept=d;gCur=0;gAns={};goTo('survey');renderQ();
+});
+
+document.getElementById('btn-rh').addEventListener('click',function(){
+  document.getElementById('pin-inp').value='';
+  document.getElementById('pin-err').style.display='none';
+  goTo('pin');
+});
+
+document.getElementById('btn-pin-cancel').addEventListener('click',function(){goTo('welcome');});
+
+document.getElementById('btn-pin-ok').addEventListener('click',function(){checkPin();});
+document.getElementById('pin-inp').addEventListener('keydown',function(e){if(e.key==='Enter')checkPin();});
+
+function checkPin(){
+  load();
+  var v=document.getElementById('pin-inp').value;
+  if(v===gPin){goTo('dashboard');renderDash();}
+  else{document.getElementById('pin-err').style.display='block';document.getElementById('pin-inp').value='';}
+}
+
+document.getElementById('btn-prev').addEventListener('click',function(){if(gCur>0){gCur--;renderQ();}});
+document.getElementById('btn-next').addEventListener('click',function(){
+  var q=QS[gCur];
+  if(q.t==='open'){var ta=document.getElementById('oa-'+q.id);if(ta)gAns[q.id]=ta.value.trim();}
+  if(gCur===QS.length-1){submitSurvey();return;}
+  gCur++;renderQ();
+});
+
+document.getElementById('btn-thanks-back').addEventListener('click',function(){goTo('welcome');});
+document.getElementById('btn-logout').addEventListener('click',function(){goTo('welcome');});
+document.getElementById('btn-excel').addEventListener('click',exportExcel);
+document.getElementById('btn-pdf').addEventListener('click',exportPDF);
+
+document.getElementById('tab-bar').addEventListener('click',function(e){
+  var b=e.target.closest('.tbb');if(!b)return;
+  var tab=b.getAttribute('data-tab');
+  document.querySelectorAll('.tbb').forEach(function(x){x.classList.remove('on');});
+  document.querySelectorAll('.tc').forEach(function(x){x.classList.remove('on');});
+  b.classList.add('on');
+  document.getElementById('tab-'+tab).classList.add('on');
+});
+
+/* —— QUESTIONNAIRE —— */
+function renderQ(){
+  var q=QS[gCur];
+  document.getElementById('sec-lbl').textContent=q.s;
+  document.getElementById('step-ctr').textContent=(gCur+1)+' / '+QS.length;
+  document.getElementById('pfill').style.width=Math.round((gCur/QS.length)*100)+'%';
+  var pb=document.getElementById('btn-prev');
+  pb.disabled=gCur===0;pb.style.opacity=gCur===0?'0.3':'1';
+  document.getElementById('btn-next').textContent=gCur===QS.length-1?'Soumettre →':'Suivant →';
+
+  var h='<span class="stag">'+q.s+'</span><div class="ql">'+q.l+'</div>';
+  if(q.t==='emoji'){
+    h+='<div style="display:flex;gap:6px">';
+    q.o.forEach(function(o,i){var p=o.split(' ');h+='<button class="eb'+(gAns[q.id]===i?' on':'')+'" data-qid="'+q.id+'" data-val="'+i+'" data-bt="em">'+p[0]+'<span>'+p.slice(1).join(' ')+'</span></button>';});
+    h+='</div>';
+  } else if(q.t==='s5'){
+    h+='<div class="qh">1 = Pas du tout d\'accord &nbsp;·&nbsp; 5 = Tout à fait d\'accord</div><div class="sr">';
+    [1,2,3,4,5].forEach(function(v){h+='<button class="sb'+(gAns[q.id]===v?' on':'')+'" data-qid="'+q.id+'" data-val="'+v+'" data-bt="sc">'+v+'</button>';});
+    h+='</div>';
+  } else if(q.t==='yn'){
+    h+='<div style="display:flex;gap:6px">';
+    q.o.forEach(function(o,i){var v=3-i;h+='<button class="yb'+(gAns[q.id]===v?' on':'')+'" data-qid="'+q.id+'" data-val="'+v+'" data-bt="yn">'+o+'</button>';});
+    h+='</div>';
+  } else if(q.t==='nps'){
+    h+='<div class="qh">0 = Je ne recommanderais pas du tout &nbsp;·&nbsp; 10 = Je recommanderais sans hésiter</div><div class="sr">';
+    for(var v=0;v<=10;v++){h+='<button class="sb'+(gAns[q.id]===v?' on':'')+'" data-qid="'+q.id+'" data-val="'+v+'" data-bt="sc" style="max-width:50px">'+v+'</button>';}
+    h+='</div>';
+  } else if(q.t==='mot'){
+    h+='<div class="qh">Sélectionnez tout ce qui s\'applique</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">';
+    q.o.forEach(function(o,i){h+='<button class="mb'+(gAns[q.id]&&gAns[q.id].indexOf(i)>=0?' on':'')+'" data-qid="'+q.id+'" data-idx="'+i+'">'+o+'</button>';});
+    h+='</div>';
+  } else if(q.t==='open'){
+    h+='<textarea class="oa" id="oa-'+q.id+'" placeholder="Votre réponse libre...">'+(gAns[q.id]||'')+'</textarea>';
+  }
+
+  var area=document.getElementById('q-area');
+  area.innerHTML=h;
+  area.onclick=function(e){
+    var btn=e.target.closest('[data-qid]');if(!btn)return;
+    var qid=btn.getAttribute('data-qid');
+    if(btn.hasAttribute('data-idx')){
+      var idx=parseInt(btn.getAttribute('data-idx'));
+      if(!gAns[qid])gAns[qid]=[];
+      var pos=gAns[qid].indexOf(idx);
+      if(pos>=0){gAns[qid].splice(pos,1);btn.classList.remove('on');}
+      else{gAns[qid].push(idx);btn.classList.add('on');}
+      return;
+    }
+    var val=parseInt(btn.getAttribute('data-val'));
+    gAns[qid]=val;
+    var bt=btn.getAttribute('data-bt');
+    var cls=bt==='em'?'.eb':bt==='sc'?'.sb':'.yb';
+    area.querySelectorAll(cls+'[data-qid="'+qid+'"]').forEach(function(b){b.classList.remove('on');});
+    btn.classList.add('on');
+  };
+}
+
+function submitSurvey(){
+  load();
+  gResp.push({name:gName,dept:gDept,ts:new Date().toISOString(),a:JSON.parse(JSON.stringify(gAns))});
+  save();
+  goTo('thanks');
+}
+
+/* —— DASHBOARD —— */
+function renderDash(){
+  load();
+  var n=gResp.length;
+  var allK=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q17','q18','q19','q20','q21','q22'];
+  var gVals=gResp.reduce(function(a,r){return a.concat(allK.map(function(k){return r.a[k];}).filter(function(v){return v!=null;}));}, []);
+  var gAvg=avg(gVals);
+  var npsV=gResp.map(function(r){return r.a.q23;}).filter(function(v){return v!=null;});
+  var prom=npsV.filter(function(v){return v>=9;}).length,det=npsV.filter(function(v){return v<=6;}).length;
+  var nps=npsV.length?Math.round(((prom-det)/npsV.length)*100):'—';
+  var emo=[0,0,0,0,0];
+  gResp.forEach(function(r){if(r.a.q0!=null)emo[r.a.q0]++;});
+  var topE=n>0?EMOS[emo.indexOf(Math.max.apply(null,emo))]:'—';
+
+  function st(v,l,c){return '<div class="sc"><div class="sn"'+(c?' style="color:'+c+'"':'')+'>'+v+'</div><div class="sl">'+l+'</div></div>';}
+  document.getElementById('stat-grid').innerHTML=st(n,'Réponses','')+st(gAvg?gAvg.toFixed(1)+'/5':'—','Score global',gAvg?col(gAvg):'')+st(nps,'eNPS',typeof nps==='number'?(nps>=0?'#0F6E56':'#A32D2D'):'')+st(topE,'Ressenti dominant','')+st(prom,'Promoteurs','#0F6E56')+st(det,'Détracteurs','#A32D2D');
+
+  if(n===0){
+    ['c-scores','c-reponses','c-individuel'].forEach(function(id){document.getElementById(id).innerHTML='<p style="font-size:13px;color:#888;text-align:center;padding:1rem">Aucune réponse enregistrée.</p>';});
+    document.getElementById('c-recos').innerHTML='<div class="card"><p style="font-size:13px;color:#888;text-align:center">Aucune réponse enregistrée.</p></div>';
+  } else {
+    var sh='<p style="font-size:11px;color:#888;margin-bottom:1rem"><span style="color:#0F6E56">●</span> ≥4 excellent &nbsp;<span style="color:#854F0B">●</span> 3–4 moyen &nbsp;<span style="color:#A32D2D">●</span> &lt;3 faible</p>';
+    THEMES.forEach(function(t){var s=thSc(gResp,t);var pct=s?Math.round((s/5)*100):0;var c=col(s||0);sh+='<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>'+t.label+'</span><span style="font-weight:700;color:'+c+'">'+(s?s.toFixed(1):'—')+'/5</span></div><div style="height:10px;background:#e8eef0;border-radius:5px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+c+';border-radius:5px"></div></div></div>';});
+    var depts={};gResp.forEach(function(r){depts[r.dept]=(depts[r.dept]||0)+1;});
+    sh+='<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #eee"><p style="font-size:12px;font-weight:700;margin-bottom:8px">Répartition par département</p>';
+    Object.keys(depts).forEach(function(d){sh+='<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #f0f0f0"><span>'+d+'</span><span style="font-weight:700">'+depts[d]+' rép.</span></div>';});
+    sh+='</div>';
+    document.getElementById('c-scores').innerHTML=sh;
+
+    var recos=buildRecos(nps,emo,gAvg);
+    var rh='<p style="font-size:11px;color:#888;margin-bottom:.75rem">Générées automatiquement à partir des scores et tendances.</p>';
+    recos.forEach(function(r){rh+='<div class="ri" style="border-left-color:'+r.c+'"><div class="rt" style="color:'+r.c+'">'+r.i+' '+r.t+'</div><div class="rb">'+r.b+'</div></div>';});
+    document.getElementById('c-recos').innerHTML=rh;
+
+    var mc=new Array(10).fill(0);
+    gResp.forEach(function(r){if(Array.isArray(r.a.q24))r.a.q24.forEach(function(i){mc[i]++;});});
+    var topM=mc.map(function(c,i){return{l:MOT[i],c:c};}).sort(function(a,b){return b.c-a.c;}).filter(function(m){return m.c>0;}).slice(0,6);
+    var rph='<p style="font-size:12px;font-weight:700;margin-bottom:8px">Top motivations</p><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.25rem">';
+    topM.forEach(function(m){rph+='<span style="padding:4px 10px;border-radius:20px;background:#f0f0f0;font-size:11px;border:1px solid #ddd">'+m.l+' <strong>('+m.c+')</strong></span>';});
+    rph+='</div><p style="font-size:12px;font-weight:700;margin-bottom:8px">Ce que je changerais (Q25)</p>';
+    gResp.forEach(function(r){if(r.a.q25)rph+='<div class="oqc"><strong>'+r.name+'</strong> · <span style="color:#888;font-size:10px">'+r.dept+'</span><br>'+r.a.q25+'</div>';});
+    rph+='<p style="font-size:12px;font-weight:700;margin:1.25rem 0 8px">Ce qu\'IZICHANGE fait bien (Q26)</p>';
+    gResp.forEach(function(r){if(r.a.q26)rph+='<div class="oqc"><strong>'+r.name+'</strong> · <span style="color:#888;font-size:10px">'+r.dept+'</span><br>'+r.a.q26+'</div>';});
+    document.getElementById('c-reponses').innerHTML=rph;
+
+    var ih='<p style="font-size:11px;color:#888;margin-bottom:.75rem">Scores individuels par thématique.</p><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="border-bottom:1px solid #eee"><th style="text-align:left;padding:6px;background:#f8f9fb">Collaborateur</th><th style="padding:6px 4px;background:#f8f9fb;font-size:10px">Dpt</th>';
+    THEMES.forEach(function(t){ih+='<th style="padding:6px 3px;background:#f8f9fb;font-size:10px">'+t.label.split(' ')[0]+'</th>';});
+    ih+='<th style="padding:6px 3px;background:#f8f9fb;font-size:10px">NPS</th><th style="padding:6px 2px;background:#f8f9fb;font-size:10px">😊</th></tr></thead><tbody>';
+    gResp.forEach(function(r,i){
+      ih+='<tr style="border-bottom:1px solid #f0f0f0;background:'+(i%2?'#fafafa':'#fff')+'"><td style="padding:5px 6px">'+r.name+'</td><td style="padding:5px 3px;font-size:10px;color:#888">'+r.dept.split(' ')[0]+'</td>';
+      THEMES.forEach(function(t){var v=t.keys.map(function(k){return r.a[k];}).filter(function(v){return v!=null;});var s=avg(v);ih+='<td style="padding:5px 3px;text-align:center;font-weight:700;color:'+(s?col(s):'#ccc')+'">'+(s?s.toFixed(1):'—')+'</td>';});
+      ih+='<td style="padding:5px 3px;text-align:center;font-weight:700">'+(r.a.q23!=null?r.a.q23:'—')+'</td><td style="padding:5px 2px;text-align:center">'+(r.a.q0!=null?EMOS[r.a.q0]:'—')+'</td></tr>';
+    });
+    ih+='</tbody></table></div>';
+    document.getElementById('c-individuel').innerHTML=ih;
+  }
+
+  /* Lien & Paramètres */
+  var url=window.location.href.split('#')[0];
+  document.getElementById('c-lien').innerHTML=
+    '<p style="font-size:14px;font-weight:700;margin-bottom:.75rem">Lien à envoyer aux collaborateurs</p>'+
+    '<p style="font-size:12px;color:#666;margin-bottom:.75rem;line-height:1.6">Copiez ce lien et envoyez-le par email, WhatsApp ou tout autre canal. Les collaborateurs accèdent directement au questionnaire sans voir le tableau de bord RH.</p>'+
+    '<div class="lbox" id="url-box">'+url+'</div>'+
+    '<div style="display:flex;align-items:center;gap:.75rem">'+
+    '<button class="btn navy" id="btn-copy">Copier le lien</button>'+
+    '<span id="copy-ok" style="font-size:12px;color:#0F6E56;display:none;font-weight:700">✅ Copié dans le presse-papiers !</span></div>'+
+    '<div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee">'+
+    '<p style="font-size:14px;font-weight:700;margin-bottom:.75rem">Changer le code PIN RH</p>'+
+    '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+
+    '<input id="new-pin" type="password" maxlength="4" placeholder="Nouveau PIN (4 chiffres)" class="inp" style="max-width:220px;letter-spacing:4px;text-align:center;font-size:16px;font-weight:700">'+
+    '<button class="btn navy" id="btn-save-pin">Enregistrer</button></div>'+
+    '<p style="font-size:11px;color:#aaa;margin-top:.5rem">PIN actuel : '+gPin.replace(/./g,'•')+'</p></div>'+
+    '<div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee">'+
+    '<p style="font-size:14px;font-weight:700;margin-bottom:.5rem">Gestion des données</p>'+
+    '<p style="font-size:12px;color:#666;margin-bottom:.75rem">'+n+' réponse'+(n>1?'s':'')+' enregistrée'+(n>1?'s':'')+' — stockées localement dans ce navigateur.</p>'+
+    '<button class="btn red-b" id="btn-clear">🗑 Supprimer toutes les réponses</button></div>';
+
+  document.getElementById('btn-copy').onclick=function(){
+    var txt=document.getElementById('url-box').textContent;
+    var ok=document.getElementById('copy-ok');
+    if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){ok.style.display='inline';setTimeout(function(){ok.style.display='none';},3000);});}
+    else{var r=document.createRange();r.selectNodeContents(document.getElementById('url-box'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');ok.style.display='inline';setTimeout(function(){ok.style.display='none';},3000);}
+  };
+
+  document.getElementById('btn-save-pin').onclick=function(){
+    var np=document.getElementById('new-pin').value;
+    if(!/^\d{4}$/.test(np)){alert('Le PIN doit être composé de 4 chiffres.');return;}
+    gPin=np;save();alert('PIN modifié avec succès.');renderDash();
+  };
+
+  document.getElementById('btn-clear').onclick=function(){
+    if(!confirm('Supprimer toutes les réponses ? Cette action est irréversible.'))return;
+    gResp=[];save();renderDash();
+  };
+}
+
+function buildRecos(nps,emo,gAvg){
+  var r=[];
+  THEMES.forEach(function(t){
+    var s=thSc(gResp,t);if(!s)return;
+    if(s<3)r.push({c:'#A32D2D',i:'🔴',t:'Alerte — '+t.label,b:'Score critique de '+s.toFixed(1)+'/5. Organiser un atelier d\'écoute ciblé et établir un plan d\'action concret sous 30 jours.'});
+    else if(s<3.8)r.push({c:'#854F0B',i:'🟡',t:'À améliorer — '+t.label,b:'Score intermédiaire de '+s.toFixed(1)+'/5. Planifier un point d\'équipe pour identifier les leviers d\'amélioration rapides.'});
+    else r.push({c:'#0F6E56',i:'🟢',t:'Point fort — '+t.label,b:'Performance à '+s.toFixed(1)+'/5. Capitaliser sur cet acquis et partager les bonnes pratiques entre équipes.'});
+  });
+  if(typeof nps==='number'){
+    if(nps<0)r.push({c:'#A32D2D',i:'🔴',t:'eNPS négatif — Risque de désengagement',b:'Score de '+nps+'. Des entretiens individuels s\'imposent pour identifier les causes profondes rapidement.'});
+    else if(nps<30)r.push({c:'#854F0B',i:'🟡',t:'eNPS modéré — Marge de progression',b:'Score de '+nps+'. Renforcer la reconnaissance, la communication sur les avancées et la culture d\'appartenance.'});
+    else r.push({c:'#0F6E56',i:'🟢',t:'eNPS positif — Forte ambassade',b:'Score de '+nps+'. Capitaliser sur cette dynamique via des programmes de référence et de fidélisation.'});
+  }
+  var neg=emo[0]+emo[1];var tot=emo.reduce(function(a,b){return a+b;},0);
+  if(tot>0&&neg/tot>0.3)r.push({c:'#A32D2D',i:'🔴',t:'Ressenti global préoccupant',b:Math.round((neg/tot)*100)+'% des collaborateurs expriment un ressenti négatif ou mitigé. Une initiative bien-être est recommandée rapidement.'});
+  return r;
+}
+
+function exportExcel(){
+  if(!gResp.length){alert('Aucune réponse à exporter.');return;}
+  var hdr=['Nom','Département','Date','Ressenti'];
+  THEMES.forEach(function(t){hdr.push(t.label+' /5');});
+  hdr.push('NPS','Ce que je changerais','Ce qu\'IZICHANGE fait bien');
+  var rows=gResp.map(function(r){
+    var row=[r.name,r.dept,new Date(r.ts).toLocaleDateString('fr-FR'),r.a.q0!=null?ELBL[r.a.q0]:''];
+    THEMES.forEach(function(t){var v=t.keys.map(function(k){return r.a[k];}).filter(function(v){return v!=null;});var s=avg(v);row.push(s?parseFloat(s.toFixed(2)):'');});
+    row.push(r.a.q23!=null?r.a.q23:'',r.a.q25||'',r.a.q26||'');
+    return row;
+  });
+  var ws=XLSX.utils.aoa_to_sheet([hdr].concat(rows));
+  ws['!cols']=[{wch:22},{wch:24},{wch:12},{wch:12}].concat(THEMES.map(function(){return{wch:14};})).concat([{wch:6},{wch:42},{wch:42}]);
+  var s2=[['Thématique','Score moyen /5','Nb de réponses']];
+  THEMES.forEach(function(t){var v=gResp.reduce(function(a,r){return a.concat(t.keys.map(function(k){return r.a[k];}).filter(function(v){return v!=null;}));}, []);var s=avg(v);s2.push([t.label,s?parseFloat(s.toFixed(2)):'',v.length]);});
+  var ws2=XLSX.utils.aoa_to_sheet(s2);
+  var wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'Réponses individuelles',ws);
+  XLSX.utils.book_append_sheet(wb,'Scores par thématique',ws2);
+  XLSX.writeFile(wb,'IZICHANGE_Engagement_2026.xlsx');
+}
+
+function exportPDF(){
+  if(!gResp.length){alert('Aucune réponse à exporter.');return;}
+  var allK=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q17','q18','q19','q20','q21','q22'];
+  var gVals=gResp.reduce(function(a,r){return a.concat(allK.map(function(k){return r.a[k];}).filter(function(v){return v!=null;}));}, []);
+  var gAvg=avg(gVals);
+  var npsV=gResp.map(function(r){return r.a.q23;}).filter(function(v){return v!=null;});
+  var prom=npsV.filter(function(v){return v>=9;}).length,det=npsV.filter(function(v){return v<=6;}).length;
+  var nps=npsV.length?Math.round(((prom-det)/npsV.length)*100):'N/A';
+  var emo=[0,0,0,0,0];gResp.forEach(function(r){if(r.a.q0!=null)emo[r.a.q0]++;});
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport Engagement IZICHANGE 2026</title><style>body{font-family:Arial,sans-serif;color:#222;padding:28px;max-width:820px;margin:0 auto}h1{font-size:20px;font-weight:700;color:#1B3A6B;margin-bottom:4px}.meta{font-size:10px;color:#888;margin-bottom:16px}h2{font-size:13px;font-weight:700;color:#1B3A6B;margin:18px 0 8px;border-bottom:1px solid #E8EEF7;padding-bottom:3px}.sg{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:14px}.sc{background:#F5F5F5;border-radius:6px;padding:9px;text-align:center}.sn{font-size:18px;font-weight:700}.sl{font-size:10px;color:#777;margin-top:2px}.bw{margin-bottom:8px}.bl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px}.bt{height:8px;background:#eee;border-radius:4px;overflow:hidden}.bf{height:100%;border-radius:4px}.ri{border-left:3px solid;padding:7px 10px;margin-bottom:6px;background:#f9f9f9;border-radius:0 5px 5px 0}.rt{font-size:11px;font-weight:700;margin-bottom:1px}.rb{font-size:10px;color:#555;line-height:1.5}table{width:100%;border-collapse:collapse;font-size:10px}th{text-align:left;padding:5px;background:#1B3A6B;color:#fff;font-weight:600}td{padding:4px 5px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}.oq{margin-bottom:5px;padding:5px 8px;background:#f5f5f5;border-radius:4px;font-size:10px;line-height:1.5}@media print{body{padding:14px}}</style></head><body>'+
+  '<h1>Rapport d\'enquête d\'engagement — IZICHANGE 2026</h1><div class="meta">Généré le '+new Date().toLocaleDateString('fr-FR')+' · '+gResp.length+' réponse'+(gResp.length>1?'s':'')+' collectée'+(gResp.length>1?'s':'')+'</div>'+
+  '<div class="sg"><div class="sc"><div class="sn">'+gResp.length+'</div><div class="sl">Réponses</div></div><div class="sc"><div class="sn">'+(gAvg?gAvg.toFixed(1):'—')+'/5</div><div class="sl">Score global</div></div><div class="sc"><div class="sn">'+nps+'</div><div class="sl">eNPS</div></div><div class="sc"><div class="sn">'+prom+'</div><div class="sl">Promoteurs</div></div><div class="sc"><div class="sn">'+det+'</div><div class="sl">Détracteurs</div></div></div>'+
+  '<h2>Scores par thématique</h2>';
+  THEMES.forEach(function(t){var s=thSc(gResp,t);var pct=s?Math.round((s/5)*100):0;var c=col(s||0);html+='<div class="bw"><div class="bl"><span>'+t.label+'</span><span style="font-weight:700;color:'+c+'">'+(s?s.toFixed(1):'—')+'/5</span></div><div class="bt"><div class="bf" style="width:'+pct+'%;background:'+c+'"></div></div></div>';});
+  var recos=buildRecos(nps,emo,gAvg);html+='<h2>Recommandations</h2>';
+  recos.forEach(function(r){html+='<div class="ri" style="border-left-color:'+r.c+'"><div class="rt" style="color:'+r.c+'">'+r.i+' '+r.t+'</div><div class="rb">'+r.b+'</div></div>';});
+  html+='<h2>Scores individuels</h2><table><tr><th>Collaborateur</th><th>Département</th>';
+  THEMES.forEach(function(t){html+='<th>'+t.label+'</th>';});html+='<th>NPS</th></tr>';
+  gResp.forEach(function(r){html+='<tr><td>'+r.name+'</td><td>'+r.dept+'</td>';THEMES.forEach(function(t){var v=t.keys.map(function(k){return r.a[k];}).filter(function(v){return v!=null;});var s=avg(v);html+='<td>'+(s?s.toFixed(1):'—')+'</td>';});html+='<td>'+(r.a.q23!=null?r.a.q23:'—')+'</td></tr>';});
+  html+='</table>';
+  var q25s=gResp.filter(function(r){return r.a.q25;});if(q25s.length){html+='<h2>Ce que je changerais</h2>';q25s.forEach(function(r){html+='<div class="oq"><strong>'+r.name+'</strong> · '+r.dept+'<br>'+r.a.q25+'</div>';});}
+  var q26s=gResp.filter(function(r){return r.a.q26;});if(q26s.length){html+='<h2>Ce qu\'IZICHANGE fait bien</h2>';q26s.forEach(function(r){html+='<div class="oq"><strong>'+r.name+'</strong> · '+r.dept+'<br>'+r.a.q26+'</div>';});}
+  html+='</body></html>';
+  var w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();setTimeout(function(){w.print();},600);}
+  else{alert('Autorisez les popups de ce site pour générer le PDF.');}
+}
+
+load();
+</script>
+</body>
+</html>
