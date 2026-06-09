@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": ">=18.18.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -17,20 +17,20 @@
     "db:setup": "drizzle-kit push && tsx lib/db/seed.ts"
   },
   "dependencies": {
-    "next": "15.1.6",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.38.3",
+    "framer-motion": "^11.18.0",
+    "jose": "^5.9.6",
+    "lucide-react": "^0.469.0",
+    "next": "^15.5.19",
+    "postgres": "^3.4.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "drizzle-orm": "^0.38.3",
-    "postgres": "^3.4.5",
-    "jose": "^5.9.6",
-    "bcryptjs": "^2.4.3",
-    "zod": "^3.24.1",
-    "framer-motion": "^11.18.0",
     "recharts": "^2.15.0",
-    "lucide-react": "^0.469.0",
+    "tailwind-merge": "^2.6.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.6.0"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
