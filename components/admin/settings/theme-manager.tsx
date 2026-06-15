@@ -60,7 +60,7 @@ export function ThemeManager({
     <GlassCard>
       <div className="mb-4 flex items-center gap-2">
         <Layers className="h-4 w-4 text-brand-600" />
-        <h3 className="font-display text-base font-semibold text-slate-900">Thématiques notées</h3>
+        <h3 className="font-display text-base font-semibold text-ink">Thématiques notées</h3>
         <span className="ml-auto text-xs font-medium text-slate-400">{themes.length}</span>
       </div>
       <p className="mb-3 text-[11px] leading-relaxed text-slate-400">
@@ -76,7 +76,7 @@ export function ThemeManager({
               onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
               className="h-9 flex-1 border-transparent bg-transparent px-2 hover:border-slate-300"
             />
-            <button onClick={() => setTarget(t)} className="p-1.5 text-slate-400 transition-colors hover:text-red-600" aria-label="Supprimer">
+            <button onClick={() => setTarget(t)} className="p-1.5 text-slate-400 transition-colors hover:text-danger-600" aria-label="Supprimer">
               <Trash2 className="h-4 w-4" />
             </button>
           </div>

@@ -12,27 +12,27 @@ export function avg(values: (number | null | undefined)[]): number | null {
   return v.reduce((a, b) => a + b, 0) / v.length;
 }
 
-/** Score → hex color for charts and inline styles (tuned for light UI). */
+/** Score → hex color for charts and inline styles (IZICHANGE palette). */
 export function scoreHex(score: number | null | undefined): string {
   if (score == null) return "#94a3b8"; // slate-400
-  if (score >= 4) return "#059669"; // emerald-600
+  if (score >= 4) return "#008080"; // brand teal
   if (score >= 3) return "#d97706"; // amber-600
-  return "#e11d48"; // rose-600
+  return "#dc3e4d"; // brand red
 }
 
 /** Score → tailwind text color class. */
 export function scoreClass(score: number | null | undefined): string {
   if (score == null) return "text-slate-400";
-  if (score >= 4) return "text-accent-600";
+  if (score >= 4) return "text-brand-600";
   if (score >= 3) return "text-amber-600";
-  return "text-rose-600";
+  return "text-danger-500";
 }
 
 export function npsHex(nps: number | null | undefined): string {
   if (nps == null) return "#94a3b8";
-  if (nps >= 30) return "#059669";
+  if (nps >= 30) return "#008080";
   if (nps >= 0) return "#d97706";
-  return "#e11d48";
+  return "#dc3e4d";
 }
 
 export function formatDateFR(d: string | Date): string {

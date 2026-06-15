@@ -20,7 +20,7 @@ export function ScoresTab({ stats }: { stats: DashboardStats }) {
       {/* Theme scores */}
       <GlassCard className="lg:col-span-2">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-display text-base font-semibold text-slate-900">Scores par thématique</h3>
+          <h3 className="font-display text-base font-semibold text-ink">Scores par thématique</h3>
           <Legend />
         </div>
         <div className="space-y-3.5">
@@ -53,7 +53,7 @@ export function ScoresTab({ stats }: { stats: DashboardStats }) {
 
       {/* Ressenti distribution */}
       <GlassCard>
-        <h3 className="mb-3 font-display text-base font-semibold text-slate-900">Ressenti global</h3>
+        <h3 className="mb-3 font-display text-base font-semibold text-ink">Ressenti global</h3>
         {ressentiData.length ? (
           <div className="space-y-2.5">
             {ressentiData.map((d, i) => (
@@ -78,7 +78,7 @@ export function ScoresTab({ stats }: { stats: DashboardStats }) {
 
       {/* Departments */}
       <GlassCard className="lg:col-span-2">
-        <h3 className="mb-3 font-display text-base font-semibold text-slate-900">Répartition par département</h3>
+        <h3 className="mb-3 font-display text-base font-semibold text-ink">Répartition par département</h3>
         {departments.length ? (
           <div className="h-[220px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -112,7 +112,7 @@ export function ScoresTab({ stats }: { stats: DashboardStats }) {
                 </Bar>
                 <defs>
                   <linearGradient id="deptGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#4f46e5" />
+                    <stop offset="0%" stopColor="#008080" />
                     <stop offset="100%" stopColor="#10b981" />
                   </linearGradient>
                 </defs>
@@ -126,7 +126,7 @@ export function ScoresTab({ stats }: { stats: DashboardStats }) {
 
       {/* Motivations */}
       <GlassCard>
-        <h3 className="mb-3 font-display text-base font-semibold text-slate-900">Top motivations</h3>
+        <h3 className="mb-3 font-display text-base font-semibold text-ink">Top motivations</h3>
         {motivations.length ? (
           <div className="flex flex-wrap gap-2">
             {motivations.slice(0, 8).map((m) => (
@@ -150,13 +150,13 @@ function Legend() {
   return (
     <div className="flex items-center gap-3 text-[10px] font-medium text-slate-400">
       <span className="flex items-center gap-1">
-        <i className="h-2 w-2 rounded-full bg-accent-600" />≥4
+        <i className="h-2 w-2 rounded-full bg-brand-600" />≥4
       </span>
       <span className="flex items-center gap-1">
         <i className="h-2 w-2 rounded-full bg-amber-500" />3–4
       </span>
       <span className="flex items-center gap-1">
-        <i className="h-2 w-2 rounded-full bg-rose-500" />&lt;3
+        <i className="h-2 w-2 rounded-full bg-danger-500" />&lt;3
       </span>
     </div>
   );

@@ -79,7 +79,7 @@ export function CollaboratorsTab({ stats, onChanged }: { stats: DashboardStats; 
                 <td className="px-3 py-2.5 text-right">
                   <button
                     onClick={() => setTarget(c)}
-                    className="text-slate-400 transition-colors hover:text-red-600"
+                    className="text-slate-400 transition-colors hover:text-danger-600"
                     aria-label="Supprimer"
                   >
                     <Trash2 className="h-4 w-4" />

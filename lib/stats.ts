@@ -13,7 +13,7 @@ import type {
   ThemeScore,
 } from "./types";
 
-const REC_COLORS = { low: "#e11d48", mid: "#d97706", high: "#059669" };
+const REC_COLORS = { low: "#dc3e4d", mid: "#d97706", high: "#008080" };
 const REC_ICONS = { low: "🔴", mid: "🟡", high: "🟢" };
 
 export async function computeStats(): Promise<DashboardStats> {

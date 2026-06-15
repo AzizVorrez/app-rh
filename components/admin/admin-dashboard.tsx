@@ -109,7 +109,7 @@ export function AdminDashboard() {
         <div className="border-t border-slate-200 pt-3">
           <button
             onClick={logout}
-            className="ring-focus flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="ring-focus flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-ink"
           >
             <LogOut className="h-[18px] w-[18px]" /> Déconnexion
           </button>
@@ -146,7 +146,7 @@ export function AdminDashboard() {
           {/* Toolbar */}
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="font-display text-xl font-bold text-slate-900 sm:text-2xl">{activeLabel}</h1>
+              <h1 className="font-display text-xl font-bold text-ink sm:text-2xl">{activeLabel}</h1>
               <p className="text-[12px] text-slate-400">
                 {stats?.org.name} · {stats?.org.title} {stats?.org.year}
               </p>
@@ -205,7 +205,7 @@ function NavItem({
       onClick={onClick}
       className={cn(
         "ring-focus flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
-        active ? "bg-brand-50 font-semibold text-brand-700" : "font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+        active ? "bg-brand-50 font-semibold text-brand-700" : "font-medium text-slate-600 hover:bg-slate-100 hover:text-ink",
       )}
     >
       {icon}

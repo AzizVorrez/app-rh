@@ -156,7 +156,7 @@ export function QuestionManager({
     <GlassCard>
       <div className="mb-4 flex items-center gap-2">
         <ListChecks className="h-4 w-4 text-brand-600" />
-        <h3 className="font-display text-base font-semibold text-slate-900">Questions</h3>
+        <h3 className="font-display text-base font-semibold text-ink">Questions</h3>
         <span className="text-xs font-medium text-slate-400">{questions.length}</span>
         <Button size="sm" className="ml-auto" onClick={openNew}>
           <Plus className="h-4 w-4" /> Ajouter
@@ -193,7 +193,7 @@ export function QuestionManager({
               <button onClick={() => openEdit(q)} className="p-1.5 text-slate-400 transition-colors hover:text-brand-600" aria-label="Modifier">
                 <Pencil className="h-4 w-4" />
               </button>
-              <button onClick={() => setTarget(q)} className="p-1.5 text-slate-400 transition-colors hover:text-red-600" aria-label="Supprimer">
+              <button onClick={() => setTarget(q)} className="p-1.5 text-slate-400 transition-colors hover:text-danger-600" aria-label="Supprimer">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -328,7 +328,7 @@ function QuestionEditor({
                   />
                   <button
                     onClick={() => set({ options: draft.options.filter((_, j) => j !== i) })}
-                    className="px-2 text-slate-400 transition-colors hover:text-red-600"
+                    className="px-2 text-slate-400 transition-colors hover:text-danger-600"
                     aria-label="Retirer"
                   >
                     <X className="h-4 w-4" />

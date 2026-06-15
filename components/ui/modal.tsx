@@ -58,7 +58,7 @@ export function Modal({
             >
               <X className="h-5 w-5" />
             </button>
-            {title && <h3 className="font-display text-lg font-semibold text-slate-900">{title}</h3>}
+            {title && <h3 className="font-display text-lg font-semibold text-ink">{title}</h3>}
             {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
             <div className={title || description ? "mt-4" : ""}>{children}</div>
           </motion.div>

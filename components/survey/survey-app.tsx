@@ -119,7 +119,7 @@ export function SurveyApp() {
         <Logo subtitle={config ? `${config.orgName} · ${config.year}` : "Engagement"} />
         <Link
           href="/admin/login"
-          className="ring-focus inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
+          className="ring-focus inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:text-ink"
         >
           <Lock className="h-3.5 w-3.5" /> Espace RH
         </Link>
@@ -139,7 +139,7 @@ export function SurveyApp() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
               <Lock className="h-6 w-6 text-slate-400" />
             </div>
-            <h1 className="font-display text-xl font-bold text-slate-900">Enquête fermée</h1>
+            <h1 className="font-display text-xl font-bold text-ink">Enquête fermée</h1>
             <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
               L'enquête d'engagement n'est pas ouverte pour le moment. Merci de revenir ultérieurement.
             </p>
@@ -207,7 +207,7 @@ export function SurveyApp() {
                   exit={{ opacity: 0, x: dir * -40 }}
                   transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <h2 className="mb-6 text-lg font-bold leading-snug text-slate-900 sm:text-xl">
+                  <h2 className="mb-6 text-lg font-bold leading-snug text-ink sm:text-xl">
                     {q.label}
                     {q.required && <span className="ml-1 text-brand-600">*</span>}
                   </h2>
@@ -250,7 +250,7 @@ export function SurveyApp() {
               >
                 <CheckCircle2 className="h-8 w-8 text-white" />
               </motion.div>
-              <h1 className="font-display text-2xl font-bold text-slate-900">Merci pour votre participation&nbsp;!</h1>
+              <h1 className="font-display text-2xl font-bold text-ink">Merci pour votre participation&nbsp;!</h1>
               <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
                 Vos réponses ont bien été enregistrées. La Direction RH les analysera et vous communiquera les actions
                 mises en place.

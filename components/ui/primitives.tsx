@@ -13,8 +13,8 @@ const VARIANTS: Record<Variant, string> = {
   primary: "bg-brand-600 text-white shadow-brand-sm hover:bg-brand-700 active:bg-brand-700",
   accent: "bg-accent-600 text-white shadow-[0_6px_16px_-6px_rgba(5,150,105,0.5)] hover:bg-accent-700",
   outline: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-  danger: "bg-red-600 text-white shadow-[0_6px_16px_-6px_rgba(220,38,38,0.5)] hover:bg-red-700",
+  ghost: "text-slate-600 hover:bg-slate-100 hover:text-ink",
+  danger: "bg-danger-600 text-white shadow-[0_6px_16px_-6px_rgba(220,38,38,0.5)] hover:bg-danger-700",
   subtle: "bg-slate-100 text-slate-700 hover:bg-slate-200",
 };
 const SIZES: Record<Size, string> = {
@@ -81,7 +81,7 @@ export function Badge({
     brand: "bg-brand-50 text-brand-700 border-brand-100",
     accent: "bg-accent-50 text-accent-700 border-accent-100",
     amber: "bg-amber-50 text-amber-700 border-amber-100",
-    red: "bg-red-50 text-red-700 border-red-100",
+    red: "bg-danger-50 text-danger-700 border-danger-100",
     slate: "bg-slate-100 text-slate-600 border-slate-200",
     gold: "bg-amber-50 text-amber-700 border-amber-100",
   };
@@ -109,7 +109,7 @@ export function Label({ className, children, ...props }: React.LabelHTMLAttribut
 }
 
 const fieldBase =
-  "ring-focus w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors hover:border-slate-400 disabled:opacity-50 disabled:bg-slate-50";
+  "ring-focus w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-slate-400 transition-colors hover:border-slate-400 disabled:opacity-50 disabled:bg-slate-50";
 
 export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   function Input({ className, ...props }, ref) {

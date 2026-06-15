@@ -108,7 +108,7 @@ export function SurveySettings({
       <GlassCard>
         <div className="mb-4 flex items-center gap-2">
           <Settings2 className="h-4 w-4 text-brand-600" />
-          <h3 className="font-display text-base font-semibold text-slate-900">Général</h3>
+          <h3 className="font-display text-base font-semibold text-ink">Général</h3>
         </div>
 
         <div className="mb-4 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3">
@@ -148,7 +148,7 @@ export function SurveySettings({
       <GlassCard>
         <div className="mb-3 flex items-center gap-2">
           <Link2 className="h-4 w-4 text-brand-600" />
-          <h3 className="font-display text-base font-semibold text-slate-900">Lien à partager</h3>
+          <h3 className="font-display text-base font-semibold text-ink">Lien à partager</h3>
         </div>
         <p className="mb-3 text-[12px] leading-relaxed text-slate-400">
           Envoyez ce lien par email, WhatsApp ou tout autre canal. Les collaborateurs accèdent directement au
@@ -169,7 +169,7 @@ export function SurveySettings({
       <GlassCard>
         <div className="mb-3 flex items-center gap-2">
           <KeyRound className="h-4 w-4 text-brand-600" />
-          <h3 className="font-display text-base font-semibold text-slate-900">Mot de passe RH</h3>
+          <h3 className="font-display text-base font-semibold text-ink">Mot de passe RH</h3>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
@@ -189,10 +189,10 @@ export function SurveySettings({
       </GlassCard>
 
       {/* Data */}
-      <GlassCard className="border-red-200">
+      <GlassCard className="border-danger-200">
         <div className="mb-3 flex items-center gap-2">
-          <Database className="h-4 w-4 text-red-500" />
-          <h3 className="font-display text-base font-semibold text-slate-900">Gestion des données</h3>
+          <Database className="h-4 w-4 text-danger-500" />
+          <h3 className="font-display text-base font-semibold text-ink">Gestion des données</h3>
         </div>
         <p className="mb-4 text-[12px] text-slate-500">
           {responseCount} {plural(responseCount, "réponse")} {plural(responseCount, "enregistrée")} dans la base de

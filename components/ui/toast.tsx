@@ -26,7 +26,7 @@ const ICONS = {
 };
 const COLORS = {
   success: "text-accent-600",
-  error: "text-red-600",
+  error: "text-danger-600",
   info: "text-brand-600",
 };
 

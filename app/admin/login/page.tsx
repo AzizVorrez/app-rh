@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
       <AmbientGlow />
       <div className="absolute left-0 right-0 top-0 flex items-center justify-between p-6">
         <Logo subtitle="Espace RH" />
-        <Link href="/" className="text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900">
+        <Link href="/" className="text-xs font-semibold text-slate-500 transition-colors hover:text-ink">
           ← Retour à l'enquête
         </Link>
       </div>
@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 shadow-brand-sm">
             <Lock className="h-6 w-6 text-white" />
           </div>
-          <h1 className="font-display text-xl font-bold text-slate-900">Accès RH sécurisé</h1>
+          <h1 className="font-display text-xl font-bold text-ink">Accès RH sécurisé</h1>
           <p className="mt-1.5 text-sm text-slate-500">Réservé à la Direction des Ressources Humaines</p>
 
           <div className="mt-7 text-left">
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
               placeholder="••••••••"
               className="text-center tracking-widest"
             />
-            {error && <p className="mt-2 text-xs font-semibold text-red-600">{error}</p>}
+            {error && <p className="mt-2 text-xs font-semibold text-danger-600">{error}</p>}
             <Button className="mt-4 w-full" onClick={submit} loading={loading}>
               Accéder au tableau de bord <ArrowRight className="h-4 w-4" />
             </Button>

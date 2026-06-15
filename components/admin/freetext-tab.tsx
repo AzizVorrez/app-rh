@@ -17,7 +17,7 @@ export function FreeTextTab({ stats }: { stats: DashboardStats }) {
     <div className="space-y-5">
       {blocks.map((block) => (
         <GlassCard key={block.questionId}>
-          <h3 className="mb-3 font-display text-base font-semibold text-slate-900">{block.label}</h3>
+          <h3 className="mb-3 font-display text-base font-semibold text-ink">{block.label}</h3>
           <div className="space-y-2.5">
             {block.answers.map((a, i) => (
               <div key={i} className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">

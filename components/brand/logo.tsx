@@ -32,7 +32,7 @@ export function Logo({
     <div className={cn("flex items-center gap-3", className)}>
       <LogoMark />
       <div className="leading-tight">
-        <div className="font-display text-[15px] font-bold tracking-tight text-slate-900">
+        <div className="font-display text-[15px] font-bold tracking-tight text-ink">
           IZI<span className="text-brand-600">CHANGE</span>
         </div>
         {subtitle && (

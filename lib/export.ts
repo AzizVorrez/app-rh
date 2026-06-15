@@ -69,9 +69,9 @@ const esc = (s: string) =>
 
 function scoreColorLight(s: number | null): string {
   if (s == null) return "#64748b";
-  if (s >= 4) return "#0F6E56";
-  if (s >= 3) return "#854F0B";
-  return "#A32D2D";
+  if (s >= 4) return "#008080";
+  if (s >= 3) return "#b45309";
+  return "#dc3e4d";
 }
 
 export function exportPDF(stats: DashboardStats) {
@@ -80,9 +80,9 @@ export function exportPDF(stats: DashboardStats) {
   let html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport Engagement ${esc(org.name)} ${esc(org.year)}</title>
 <style>
 body{font-family:Arial,Helvetica,sans-serif;color:#1f2937;padding:30px;max-width:840px;margin:0 auto}
-h1{font-size:21px;color:#1B3A6B;margin:0 0 4px}
+h1{font-size:21px;color:#008080;margin:0 0 4px}
 .meta{font-size:11px;color:#6b7280;margin-bottom:18px}
-h2{font-size:13px;color:#1B3A6B;margin:22px 0 9px;border-bottom:1px solid #E8EEF7;padding-bottom:4px}
+h2{font-size:13px;color:#008080;margin:22px 0 9px;border-bottom:1px solid #cce7e7;padding-bottom:4px}
 .sg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
 .sc{background:#F5F7FB;border-radius:8px;padding:11px;text-align:center}
 .sn{font-size:19px;font-weight:700;color:#111827}
@@ -92,7 +92,7 @@ h2{font-size:13px;color:#1B3A6B;margin:22px 0 9px;border-bottom:1px solid #E8EEF
 .ri{border-left:3px solid;padding:8px 12px;margin-bottom:7px;background:#f9fafb;border-radius:0 6px 6px 0}
 .rt{font-size:11px;font-weight:700;margin-bottom:2px}.rb{font-size:10px;color:#4b5563;line-height:1.55}
 table{width:100%;border-collapse:collapse;font-size:10px;margin-top:4px}
-th{text-align:left;padding:6px;background:#1B3A6B;color:#fff;font-weight:600}
+th{text-align:left;padding:6px;background:#008080;color:#fff;font-weight:600}
 td{padding:5px 6px;border-bottom:1px solid #eef0f4}tr:nth-child(even) td{background:#f9fafb}
 .oq{margin-bottom:6px;padding:6px 9px;background:#f5f7fb;border-radius:5px;font-size:10px;line-height:1.55}
 @media print{body{padding:14px}}

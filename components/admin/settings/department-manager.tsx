@@ -69,7 +69,7 @@ export function DepartmentManager({
     <GlassCard>
       <div className="mb-4 flex items-center gap-2">
         <Building2 className="h-4 w-4 text-brand-600" />
-        <h3 className="font-display text-base font-semibold text-slate-900">Départements</h3>
+        <h3 className="font-display text-base font-semibold text-ink">Départements</h3>
         <span className="ml-auto text-xs font-medium text-slate-400">{departments.length}</span>
       </div>
 
@@ -83,7 +83,7 @@ export function DepartmentManager({
               className={`h-9 flex-1 border-transparent bg-transparent px-2 hover:border-slate-300 ${!d.active ? "text-slate-400 line-through" : ""}`}
             />
             <Switch checked={d.active} onChange={() => toggle(d)} />
-            <button onClick={() => setTarget(d)} className="p-1.5 text-slate-400 transition-colors hover:text-red-600" aria-label="Supprimer">
+            <button onClick={() => setTarget(d)} className="p-1.5 text-slate-400 transition-colors hover:text-danger-600" aria-label="Supprimer">
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
