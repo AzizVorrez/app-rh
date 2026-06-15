@@ -116,7 +116,7 @@ export function SurveyApp() {
       <AmbientGlow />
 
       <header className="mb-8 flex items-center justify-between">
-        <Logo subtitle={config ? `${config.orgName} · ${config.year}` : "Engagement"} />
+        <Logo subtitle={config ? `Engagement · ${config.year}` : "Engagement"} />
         <Link
           href="/admin/login"
           className="ring-focus inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:text-ink"
