@@ -46,7 +46,7 @@ export function CollaboratorsTab({ stats, onChanged }: { stats: DashboardStats; 
         <table className="w-full text-left text-[13px]">
           <thead>
             <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-400">
-              <th className="px-4 py-3 font-semibold">Collaborateur</th>
+              <th className="px-4 py-3 font-semibold">Matricule</th>
               <th className="px-2 py-3 font-semibold">Dpt</th>
               {themes.map((t) => (
                 <th key={t.id} className="px-2 py-3 text-center font-semibold" title={t.label}>
@@ -98,7 +98,7 @@ export function CollaboratorsTab({ stats, onChanged }: { stats: DashboardStats; 
         loading={deleting}
         danger
         title="Supprimer cette réponse ?"
-        message={`La réponse de ${target?.name ?? ""} sera définitivement supprimée.`}
+        message={`La réponse du matricule ${target?.name ?? ""} sera définitivement supprimée.`}
         confirmLabel="Supprimer"
       />
     </GlassCard>

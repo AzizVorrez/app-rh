@@ -45,7 +45,7 @@ export function SurveyApp() {
 
   function start() {
     if (!name.trim() || !deptId) {
-      toast("Veuillez renseigner votre nom et votre département.", "error");
+      toast("Veuillez renseigner votre matricule et votre département.", "error");
       return;
     }
     setCur(0);
@@ -159,12 +159,12 @@ export function SurveyApp() {
 
               <div className="mt-7 space-y-4">
                 <div>
-                  <Label htmlFor="name">Nom et prénom</Label>
+                  <Label htmlFor="matricule">Numéro matricule</Label>
                   <Input
-                    id="name"
+                    id="matricule"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex : Kofi Mensah"
+                    placeholder="Ex : 00123"
                     onKeyDown={(e) => e.key === "Enter" && start()}
                   />
                 </div>

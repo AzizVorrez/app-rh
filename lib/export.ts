@@ -17,7 +17,7 @@ export async function exportExcel(stats: DashboardStats) {
   const openBlocks = stats.freeText;
 
   const header = [
-    "Nom",
+    "Matricule",
     "Département",
     "Date",
     "Ressenti",
@@ -119,7 +119,7 @@ td{padding:5px 6px;border-bottom:1px solid #eef0f4}tr:nth-child(even) td{backgro
     html += `<div class="ri" style="border-left-color:${r.color}"><div class="rt" style="color:${r.color}">${r.icon} ${esc(r.title)}</div><div class="rb">${esc(r.body)}</div></div>`;
   }
 
-  html += `<h2>Scores individuels</h2><table><tr><th>Collaborateur</th><th>Département</th>${themes.map((t) => `<th>${esc(t.label)}</th>`).join("")}<th>NPS</th></tr>`;
+  html += `<h2>Scores individuels</h2><table><tr><th>Matricule</th><th>Département</th>${themes.map((t) => `<th>${esc(t.label)}</th>`).join("")}<th>NPS</th></tr>`;
   for (const c of collaborators) {
     html += `<tr><td>${esc(c.name)}</td><td>${esc(c.dept)}</td>${themes
       .map((t) => {
