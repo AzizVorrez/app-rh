@@ -164,7 +164,7 @@ export function SurveyApp() {
                     id="matricule"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex : 00123"
+                    placeholder="Ex : IZI-0000-00000"
                     onKeyDown={(e) => e.key === "Enter" && start()}
                   />
                 </div>
