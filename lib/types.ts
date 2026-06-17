@@ -26,6 +26,7 @@ export interface SurveyConfig {
   intro: string;
   questions: PublicQuestion[];
   departments: PublicDepartment[];
+  allowedMatricules: string[];
 }
 
 /** One answer submitted by a respondent. */

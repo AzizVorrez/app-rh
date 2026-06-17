@@ -1,13 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle2, Lock, ShieldCheck, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, Lock, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AmbientGlow, Logo } from "@/components/brand/logo";
 import { Button, CenteredSpinner, GlassCard, Input, Label, ProgressBar, Select } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/api";
+import { normalizeMatricule } from "@/lib/utils";
 import type { SubmittedAnswer, SurveyConfig } from "@/lib/types";
 import { QuestionInput, type AnswerValue } from "./question-input";
 
@@ -37,6 +38,14 @@ export function SurveyApp() {
   const questions = config?.questions ?? [];
   const q = questions[cur];
 
+  const allowedSet = useMemo(
+    () => new Set((config?.allowedMatricules ?? []).map(normalizeMatricule)),
+    [config],
+  );
+  const matriculeNorm = normalizeMatricule(name);
+  const matriculeValid = matriculeNorm.length > 0 && allowedSet.has(matriculeNorm);
+  const matriculeError = matriculeNorm.length > 0 && !matriculeValid;
+
   const isAnswered = (value: AnswerValue, type: string) => {
     if (type === "open") return typeof value === "string" && value.trim().length > 0;
     if (type === "multi") return Array.isArray(value) && value.length > 0;
@@ -44,8 +53,12 @@ export function SurveyApp() {
   };
 
   function start() {
-    if (!name.trim() || !deptId) {
-      toast("Veuillez renseigner votre matricule et votre département.", "error");
+    if (!matriculeValid) {
+      toast("Matricule non reconnu. Vérifiez votre numéro ou contactez les RH.", "error");
+      return;
+    }
+    if (!deptId) {
+      toast("Veuillez sélectionner votre département.", "error");
       return;
     }
     setCur(0);
@@ -89,7 +102,7 @@ export function SurveyApp() {
           payload.push({ questionId: question.id, num: v });
         }
       }
-      await api.post("/api/responses", { name: name.trim(), departmentId: deptId, answers: payload });
+      await api.post("/api/responses", { name: matriculeNorm, departmentId: deptId, answers: payload });
       setPhase("thanks");
     } catch (e) {
       toast(e instanceof Error ? e.message : "Échec de l'envoi.", "error");
@@ -164,9 +177,29 @@ export function SurveyApp() {
                     id="matricule"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex : IZI-0000-00000"
+                    placeholder="Ex : IZI-2109-01008"
                     onKeyDown={(e) => e.key === "Enter" && start()}
+                    autoComplete="off"
+                    spellCheck={false}
+                    className={
+                      matriculeError
+                        ? "border-danger-400 focus-visible:ring-danger-500/40"
+                        : matriculeValid
+                          ? "border-accent-500 focus-visible:ring-accent-500/40"
+                          : ""
+                    }
                   />
+                  {matriculeError && (
+                    <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-danger-600">
+                      <AlertCircle className="h-3.5 w-3.5 shrink-0" /> Matricule non reconnu. Vérifiez votre numéro ou
+                      contactez les RH.
+                    </p>
+                  )}
+                  {matriculeValid && (
+                    <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-accent-600">
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0" /> Matricule vérifié
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="dept">Département</Label>
@@ -179,7 +212,7 @@ export function SurveyApp() {
                     ))}
                   </Select>
                 </div>
-                <Button size="lg" className="w-full" onClick={start}>
+                <Button size="lg" className="w-full" onClick={start} disabled={!matriculeValid || !deptId}>
                   Commencer le questionnaire <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>

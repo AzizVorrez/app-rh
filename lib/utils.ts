@@ -43,3 +43,8 @@ export function formatDateFR(d: string | Date): string {
 export function plural(n: number, singular: string, pluralForm?: string): string {
   return n > 1 ? (pluralForm ?? singular + "s") : singular;
 }
+
+/** Canonicalise a matricule for comparison (trim, uppercase, strip inner spaces). */
+export function normalizeMatricule(s: string): string {
+  return s.trim().toUpperCase().replace(/\s+/g, "");
+}

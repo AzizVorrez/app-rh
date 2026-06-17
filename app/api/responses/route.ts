@@ -4,6 +4,8 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { answers, departments, questions, responses } from "@/lib/db/schema";
 import { getSurveySettings } from "@/lib/settings";
+import { isAllowedMatricule } from "@/lib/matricules";
+import { normalizeMatricule } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -37,6 +39,15 @@ export async function POST(req: NextRequest) {
     }
     const { name, departmentId, answers: submitted } = parsed.data;
 
+    // Only employees on the matricule allow-list may submit.
+    const matricule = normalizeMatricule(name);
+    if (!isAllowedMatricule(matricule)) {
+      return NextResponse.json(
+        { error: "Matricule non reconnu. Vérifiez votre numéro ou contactez les RH." },
+        { status: 403 },
+      );
+    }
+
     const dept = await db
       .select()
       .from(departments)
@@ -60,7 +71,7 @@ export async function POST(req: NextRequest) {
       const [resp] = await tx
         .insert(responses)
         .values({
-          respondentName: name,
+          respondentName: matricule,
           departmentId: dept[0].id,
           departmentName: dept[0].name,
         })

@@ -3,6 +3,7 @@ import { and, asc, eq } from "drizzle-orm";
 import { db } from "./db";
 import { departments, questions } from "./db/schema";
 import { getSurveySettings } from "./settings";
+import { ALLOWED_MATRICULES } from "./matricules";
 import type { PublicQuestion, SurveyConfig } from "./types";
 
 export async function getPublicSurvey(): Promise<SurveyConfig> {
@@ -36,5 +37,6 @@ export async function getPublicSurvey(): Promise<SurveyConfig> {
     intro: settings.survey_intro,
     questions: publicQuestions,
     departments: deptRows,
+    allowedMatricules: ALLOWED_MATRICULES,
   };
 }
