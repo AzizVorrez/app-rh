@@ -48,3 +48,11 @@ export function plural(n: number, singular: string, pluralForm?: string): string
 export function normalizeMatricule(s: string): string {
   return s.trim().toUpperCase().replace(/\s+/g, "");
 }
+
+export function normalizeEmail(s: string): string {
+  return s.trim().toLowerCase();
+}
+
+export function isValidEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+}

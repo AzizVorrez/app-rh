@@ -8,6 +8,7 @@ import {
   jsonb,
   pgEnum,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -122,6 +123,7 @@ export const testResults = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     candidateName: text("candidate_name").notNull(),
+    candidateEmail: text("candidate_email").notNull(),
     domain: text("domain").notNull(),
     block1: integer("block1").notNull(),
     block2: integer("block2").notNull(),
@@ -133,6 +135,7 @@ export const testResults = pgTable(
   },
   (t) => ({
     createdIdx: index("test_results_created_idx").on(t.createdAt),
+    emailIdx: uniqueIndex("test_results_email_idx").on(t.candidateEmail),
   }),
 );
 

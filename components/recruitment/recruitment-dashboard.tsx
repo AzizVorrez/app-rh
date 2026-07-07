@@ -16,6 +16,7 @@ import { cn, formatDateFR } from "@/lib/utils";
 interface Result {
   id: string;
   name: string;
+  email: string;
   domain: Domain;
   block1: number;
   block2: number;
@@ -70,11 +71,12 @@ export function RecruitmentDashboard() {
   function exportCsv() {
     if (!results?.length) return toast("Aucune donnée à exporter.", "error");
     const rows: (string | number)[][] = [
-      ["Candidat", "Domaine", "Date", "Bloc1/10", "Bloc2/12", "Bloc3/10", "Total", "%", "Statut"],
+      ["Candidat", "Email", "Domaine", "Date", "Bloc1/10", "Bloc2/12", "Bloc3/10", "Total", "%", "Statut"],
     ];
     for (const r of results) {
       rows.push([
         r.name,
+        r.email,
         DOMAIN_LABELS[r.domain],
         formatDateFR(r.date),
         r.block1,
@@ -197,7 +199,10 @@ export function RecruitmentDashboard() {
                   const pct = Math.round((r.total / r.max) * 100);
                   return (
                     <tr key={r.id} className="border-b border-slate-100 transition-colors hover:bg-slate-50">
-                      <td className="px-5 py-2.5 font-semibold text-slate-800">{r.name}</td>
+                      <td className="px-5 py-2.5">
+                        <div className="font-semibold text-slate-800">{r.name}</div>
+                        <div className="text-[11px] text-slate-400">{r.email}</div>
+                      </td>
                       <td className="px-2 py-2.5">
                         <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-500">
                           {DOMAIN_LABELS[r.domain]}

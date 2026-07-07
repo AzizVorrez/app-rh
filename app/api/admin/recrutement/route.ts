@@ -16,6 +16,7 @@ export async function GET() {
       results: rows.map((r) => ({
         id: r.id,
         name: r.candidateName,
+        email: r.candidateEmail,
         domain: r.domain,
         block1: r.block1,
         block2: r.block2,

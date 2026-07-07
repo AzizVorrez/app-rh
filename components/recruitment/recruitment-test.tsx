@@ -1,14 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Clock, Lock, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowRight, CheckCircle2, Clock, Lock, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AmbientGlow, Logo } from "@/components/brand/logo";
 import { Badge, Button, GlassCard, Input, Label, ProgressBar } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, isValidEmail } from "@/lib/utils";
 import { buildTest, BLOCK_LABELS, DOMAIN_OPTIONS, type Domain, type TQ, type TestScore } from "@/lib/recruitment";
 
 type Phase = "welcome" | "quiz" | "thanks";
@@ -20,7 +20,10 @@ export function RecruitmentTest() {
   const { toast } = useToast();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [domain, setDomain] = useState<Domain | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [emailTaken, setEmailTaken] = useState(false);
 
   const [qs, setQs] = useState<TQ[]>([]);
   const [cur, setCur] = useState(0);
@@ -61,17 +64,32 @@ export function RecruitmentTest() {
     return clearTimer;
   }, [phase, cur, q, clearTimer]);
 
-  function startTest() {
-    if (!name.trim() || !domain) {
-      toast("Renseignez votre nom et choisissez un domaine.", "error");
+  async function startTest() {
+    if (!name.trim() || !isValidEmail(email) || !domain) {
+      toast("Renseignez votre nom, un email valide et choisissez un domaine.", "error");
       return;
     }
-    const built = buildTest(domain);
-    setQs(built);
-    setAnswers(new Array(built.length).fill(null));
-    setCur(0);
-    setScore(null);
-    setPhase("quiz");
+    setChecking(true);
+    try {
+      const { taken } = await api.get<{ taken: boolean }>(
+        `/api/recrutement/check?email=${encodeURIComponent(email.trim())}`,
+      );
+      if (taken) {
+        setEmailTaken(true);
+        toast("Vous avez déjà passé ce test.", "error");
+        return;
+      }
+      const built = buildTest(domain);
+      setQs(built);
+      setAnswers(new Array(built.length).fill(null));
+      setCur(0);
+      setScore(null);
+      setPhase("quiz");
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Vérification impossible.", "error");
+    } finally {
+      setChecking(false);
+    }
   }
 
   function selectAnswer(i: number) {
@@ -107,6 +125,7 @@ export function RecruitmentTest() {
     try {
       const res = await api.post<{ ok: boolean; score: TestScore }>("/api/recrutement/submit", {
         name: name.trim(),
+        email: email.trim(),
         domain,
         answers,
       });
@@ -121,6 +140,8 @@ export function RecruitmentTest() {
 
   function reset() {
     setName("");
+    setEmail("");
+    setEmailTaken(false);
     setDomain(null);
     setQs([]);
     setAnswers([]);
@@ -130,7 +151,7 @@ export function RecruitmentTest() {
   }
 
   const progress = qs.length ? Math.round((cur / qs.length) * 100) : 0;
-  const startReady = !!name.trim() && !!domain;
+  const startReady = !!name.trim() && isValidEmail(email) && !!domain && !emailTaken;
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 py-6 sm:py-10">
@@ -183,6 +204,26 @@ export function RecruitmentTest() {
                   <Input id="cand" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex : Jean Dupont" />
                 </div>
                 <div>
+                  <Label htmlFor="cmail">Adresse email</Label>
+                  <Input
+                    id="cmail"
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailTaken(false);
+                    }}
+                    placeholder="Ex : jean.dupont@email.com"
+                    autoComplete="email"
+                    className={emailTaken ? "border-danger-400 focus-visible:ring-danger-500/40" : ""}
+                  />
+                  {emailTaken && (
+                    <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-danger-600">
+                      <AlertCircle className="h-3.5 w-3.5 shrink-0" /> Vous avez déjà passé ce test avec cet email.
+                    </p>
+                  )}
+                </div>
+                <div>
                   <Label>Domaine visé</Label>
                   <div className="space-y-2">
                     {DOMAIN_OPTIONS.map((d) => {
@@ -210,7 +251,7 @@ export function RecruitmentTest() {
                     })}
                   </div>
                 </div>
-                <Button size="lg" className="w-full" onClick={startTest} disabled={!startReady}>
+                <Button size="lg" className="w-full" onClick={startTest} loading={checking} disabled={!startReady}>
                   Commencer le test <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
