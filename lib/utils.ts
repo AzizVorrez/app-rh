@@ -53,6 +53,12 @@ export function normalizeEmail(s: string): string {
   return s.trim().toLowerCase();
 }
 
+// Source unique de vérité pour la validation email (client + routes check/submit).
+// Stricte : ASCII uniquement, pas de points consécutifs ni en bordure, TLD ≥ 2 lettres.
+const EMAIL_RE =
+  /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
+
 export function isValidEmail(s: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+  const v = s.trim();
+  return v.length <= 254 && EMAIL_RE.test(v);
 }

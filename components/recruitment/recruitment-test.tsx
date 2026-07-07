@@ -9,14 +9,14 @@ import { Badge, Button, GlassCard, Input, Label, ProgressBar } from "@/component
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/api";
 import { cn, isValidEmail } from "@/lib/utils";
-import { buildTest, BLOCK_LABELS, DOMAIN_OPTIONS, type Domain, type TQ, type TestScore } from "@/lib/recruitment";
+import { buildTest, BLOCK_LABELS, DOMAIN_OPTIONS, type Domain, type TestDurations, type TQ, type TestScore } from "@/lib/recruitment";
 
 type Phase = "welcome" | "quiz" | "thanks";
 
 const LETTERS = ["A", "B", "C", "D"];
 const blockOf = (i: number) => (i < 10 ? 0 : i < 22 ? 1 : 2);
 
-export function RecruitmentTest() {
+export function RecruitmentTest({ durations }: { durations: TestDurations }) {
   const { toast } = useToast();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [name, setName] = useState("");
@@ -79,7 +79,7 @@ export function RecruitmentTest() {
         toast("Vous avez déjà passé ce test.", "error");
         return;
       }
-      const built = buildTest(domain);
+      const built = buildTest(domain, durations);
       setQs(built);
       setAnswers(new Array(built.length).fill(null));
       setCur(0);
@@ -151,6 +151,7 @@ export function RecruitmentTest() {
   }
 
   const progress = qs.length ? Math.round((cur / qs.length) * 100) : 0;
+  const emailInvalid = email.trim().length > 0 && !isValidEmail(email);
   const startReady = !!name.trim() && isValidEmail(email) && !!domain && !emailTaken;
 
   return (
@@ -188,8 +189,8 @@ export function RecruitmentTest() {
                 {[
                   { v: "32 questions", l: "3 blocs" },
                   { v: "~45 min", l: "Durée estimée" },
-                  { v: "30 sec", l: "Bloc 1 — par question" },
-                  { v: "40 sec", l: "Blocs 2 & 3 — par question" },
+                  { v: `${durations.block1} sec`, l: "Bloc 1 — par question" },
+                  { v: `${durations.block23} sec`, l: "Blocs 2 & 3 — par question" },
                 ].map((c) => (
                   <div key={c.l} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
                     <div className="font-display text-lg font-semibold text-brand-600">{c.v}</div>
@@ -200,11 +201,11 @@ export function RecruitmentTest() {
 
               <div className="mt-6 space-y-4">
                 <div>
-                  <Label htmlFor="cand">Votre nom complet</Label>
+                  <Label htmlFor="cand">Votre nom complet <span className="text-red-700">*</span></Label>
                   <Input id="cand" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex : Jean Dupont" />
                 </div>
                 <div>
-                  <Label htmlFor="cmail">Adresse email</Label>
+                  <Label htmlFor="cmail">Adresse email <span className="text-red-700">*</span></Label>
                   <Input
                     id="cmail"
                     type="email"
@@ -215,16 +216,21 @@ export function RecruitmentTest() {
                     }}
                     placeholder="Ex : jean.dupont@email.com"
                     autoComplete="email"
-                    className={emailTaken ? "border-danger-400 focus-visible:ring-danger-500/40" : ""}
+                    className={emailTaken || emailInvalid ? "border-danger-400 focus-visible:ring-danger-500/40" : ""}
                   />
                   {emailTaken && (
                     <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-danger-600">
                       <AlertCircle className="h-3.5 w-3.5 shrink-0" /> Vous avez déjà passé ce test avec cet email.
                     </p>
                   )}
+                  {emailInvalid && !emailTaken && (
+                    <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-danger-600">
+                      <AlertCircle className="h-3.5 w-3.5 shrink-0" /> Format d&apos;email invalide.
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <Label>Domaine visé</Label>
+                  <Label>Domaine visé <span className="text-red-700">*</span></Label>
                   <div className="space-y-2">
                     {DOMAIN_OPTIONS.map((d) => {
                       const active = domain === d.id;

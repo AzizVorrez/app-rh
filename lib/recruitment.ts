@@ -117,8 +117,16 @@ const B3DEV: TQ[] = [
 
 const B3: Record<Domain, TQ[]> = { ops: B3OPS, com: B3COM, cyber: B3CY, dev: B3DEV };
 
-export function buildTest(domain: Domain): TQ[] {
-  return [...B1, ...B2, ...B3[domain]];
+export interface TestDurations {
+  block1: number; // secondes par question — Bloc 1
+  block23: number; // secondes par question — Blocs 2 & 3
+}
+
+export function buildTest(domain: Domain, durations?: TestDurations): TQ[] {
+  const qs = [...B1, ...B2, ...B3[domain]];
+  if (!durations) return qs;
+  // Override du temps par question selon le bloc (B1 vs B2/B3), configurable côté admin.
+  return qs.map((q, i) => ({ ...q, sec: i < B1.length ? durations.block1 : durations.block23 }));
 }
 
 export function statusFor(total: number, max: number): string {

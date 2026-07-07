@@ -104,6 +104,9 @@ const DEFAULT_SETTINGS: Record<string, unknown> = {
   survey_year: "2026",
   survey_intro:
     "Vos réponses sont confidentielles et contribuent directement à améliorer votre quotidien au travail. Comptez environ 5 minutes.",
+  // Durées (secondes/question) du test de recrutement — modifiables depuis /admin/recrutement.
+  recruitment_duration_block1: 30,
+  recruitment_duration_block23: 40,
 };
 
 async function main() {

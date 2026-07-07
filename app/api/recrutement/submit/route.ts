@@ -4,14 +4,15 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { testResults } from "@/lib/db/schema";
 import { scoreTest } from "@/lib/recruitment";
-import { normalizeEmail } from "@/lib/utils";
+import { isValidEmail, normalizeEmail } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const schema = z.object({
   name: z.string().trim().min(1).max(120),
-  email: z.string().trim().email().max(160),
+  // Même règle que le client (isValidEmail) — cohérence welcome ↔ submit, pas de 400 après le test.
+  email: z.string().trim().max(160).refine(isValidEmail, "Email invalide."),
   domain: z.enum(["ops", "com", "cyber", "dev"]),
   answers: z.array(z.number().int().nullable()).max(60),
 });

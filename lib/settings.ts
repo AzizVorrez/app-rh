@@ -53,6 +53,32 @@ export async function getSurveySettings(): Promise<SurveySettings> {
   };
 }
 
+/* ─── Recruitment test settings (durées du test psychotechnique) ─────── */
+
+const RECRUITMENT_DEFAULTS = { durationBlock1: 30, durationBlock23: 40 } as const;
+const DURATION_MIN = 5;
+const DURATION_MAX = 600;
+
+export interface RecruitmentSettings {
+  durationBlock1: number;
+  durationBlock23: number;
+}
+
+/** Coerce + clamp une durée stockée (jsonb) vers un entier de secondes valide. */
+function clampDuration(v: unknown, fallback: number): number {
+  const n = typeof v === "number" ? v : Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(DURATION_MAX, Math.max(DURATION_MIN, Math.round(n)));
+}
+
+export async function getRecruitmentSettings(): Promise<RecruitmentSettings> {
+  const all = await getAllSettings();
+  return {
+    durationBlock1: clampDuration(all.recruitment_duration_block1, RECRUITMENT_DEFAULTS.durationBlock1),
+    durationBlock23: clampDuration(all.recruitment_duration_block23, RECRUITMENT_DEFAULTS.durationBlock23),
+  };
+}
+
 /** Verify a password against the stored hash, lazily initialising from env on first use. */
 export async function verifyAdminPassword(password: string): Promise<boolean> {
   let hash = await getSetting<string>("admin_password_hash");

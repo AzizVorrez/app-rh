@@ -1,5 +1,8 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
+
+// Next.js stocke les variables dans .env.local — dotenv/config ne lit que .env
+config({ path: ".env.local" });
 
 export default defineConfig({
   schema: "./lib/db/schema.ts",
