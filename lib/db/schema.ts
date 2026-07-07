@@ -116,6 +116,28 @@ export const settings = pgTable("settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Psychotechnic recruitment test results (Programme Jeune Talent). */
+export const testResults = pgTable(
+  "test_results",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    candidateName: text("candidate_name").notNull(),
+    domain: text("domain").notNull(),
+    block1: integer("block1").notNull(),
+    block2: integer("block2").notNull(),
+    block3: integer("block3").notNull(),
+    total: integer("total").notNull(),
+    maxScore: integer("max_score").notNull(),
+    status: text("status").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    createdIdx: index("test_results_created_idx").on(t.createdAt),
+  }),
+);
+
+export type TestResultRow = typeof testResults.$inferSelect;
+
 export type Department = typeof departments.$inferSelect;
 export type Theme = typeof themes.$inferSelect;
 export type Question = typeof questions.$inferSelect;

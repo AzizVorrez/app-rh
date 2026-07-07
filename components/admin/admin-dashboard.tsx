@@ -5,12 +5,14 @@ import {
   BarChart3,
   Download,
   FileText,
+  GraduationCap,
   Lightbulb,
   LogOut,
   MessageSquareText,
   Settings2,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Logo } from "@/components/brand/logo";
@@ -105,6 +107,12 @@ export function AdminDashboard() {
           {TABS.map((t) => (
             <NavItem key={t.key} active={tab === t.key} icon={<t.icon className="h-[18px] w-[18px]" />} label={t.label} onClick={() => setTab(t.key)} />
           ))}
+          <Link
+            href="/admin/recrutement"
+            className="ring-focus mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-ink"
+          >
+            <GraduationCap className="h-[18px] w-[18px]" /> Recrutement
+          </Link>
         </nav>
         <div className="border-t border-slate-200 pt-3">
           <button
