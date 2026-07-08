@@ -9,7 +9,7 @@ import { Badge, Button, GlassCard, Input, Label, ProgressBar } from "@/component
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/api";
 import { cn, isValidEmail } from "@/lib/utils";
-import { buildTest, BLOCK_LABELS, DOMAIN_OPTIONS, type Domain, type TestDurations, type TQ, type TestScore } from "@/lib/recruitment";
+import { BLOCK_LABELS, DOMAIN_OPTIONS, type Domain, type PublicTQ, type TestDurations, type TestScore } from "@/lib/recruitment";
 
 type Phase = "welcome" | "quiz" | "thanks";
 
@@ -25,18 +25,16 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
   const [checking, setChecking] = useState(false);
   const [emailTaken, setEmailTaken] = useState(false);
 
-  const [qs, setQs] = useState<TQ[]>([]);
+  const [qs, setQs] = useState<PublicTQ[]>([]);
   const [cur, setCur] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [expired, setExpired] = useState(false);
-  const [flash, setFlash] = useState(false);
   const [tLeft, setTLeft] = useState(30);
   const [submitting, setSubmitting] = useState(false);
   const [score, setScore] = useState<TestScore | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const q = qs[cur];
-  const revealed = expired || flash;
   const selected = answers[cur] ?? null;
 
   const clearTimer = useCallback(() => {
@@ -48,7 +46,6 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
   useEffect(() => {
     if (phase !== "quiz" || !q) return;
     setExpired(false);
-    setFlash(false);
     setTLeft(q.sec);
     clearTimer();
     timerRef.current = setInterval(() => {
@@ -79,21 +76,24 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
         toast("Vous avez déjà passé ce test.", "error");
         return;
       }
-      const built = buildTest(domain, durations);
-      setQs(built);
-      setAnswers(new Array(built.length).fill(null));
+      // Les questions (sans bonnes réponses) sont servies par le serveur.
+      const { questions } = await api.get<{ questions: PublicTQ[] }>(
+        `/api/recrutement/test?domain=${domain}`,
+      );
+      setQs(questions);
+      setAnswers(new Array(questions.length).fill(null));
       setCur(0);
       setScore(null);
       setPhase("quiz");
     } catch (e) {
-      toast(e instanceof Error ? e.message : "Vérification impossible.", "error");
+      toast(e instanceof Error ? e.message : "Impossible de démarrer le test.", "error");
     } finally {
       setChecking(false);
     }
   }
 
   function selectAnswer(i: number) {
-    if (revealed) return;
+    if (expired) return;
     setAnswers((a) => {
       const next = [...a];
       next[cur] = i;
@@ -103,12 +103,7 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
 
   function next() {
     clearTimer();
-    if (!revealed) {
-      setFlash(true);
-      window.setTimeout(() => advance(), 500);
-    } else {
-      advance();
-    }
+    advance();
   }
 
   function advance() {
@@ -293,35 +288,23 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
                   <div className="space-y-2">
                     {q.o.map((opt, i) => {
                       const isSel = selected === i;
-                      const isCorrect = revealed && i === q.c;
-                      const isWrong = revealed && isSel && i !== q.c;
                       return (
                         <button
                           key={i}
                           type="button"
                           onClick={() => selectAnswer(i)}
-                          disabled={revealed}
+                          disabled={expired}
                           className={cn(
                             "ring-focus flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-[13px] leading-relaxed transition-all",
-                            isCorrect
-                              ? "border-accent-500 bg-accent-50 text-accent-700"
-                              : isWrong
-                                ? "border-danger-400 bg-danger-50 text-danger-700"
-                                : isSel
-                                  ? "border-brand-500 bg-brand-50 text-brand-700"
-                                  : "border-slate-200 bg-white text-slate-700 hover:border-brand-400",
+                            isSel
+                              ? "border-brand-500 bg-brand-50 text-brand-700"
+                              : "border-slate-200 bg-white text-slate-700 hover:border-brand-400",
                           )}
                         >
                           <span
                             className={cn(
                               "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold",
-                              isCorrect
-                                ? "bg-accent-600 text-white"
-                                : isWrong
-                                  ? "bg-danger-500 text-white"
-                                  : isSel
-                                    ? "bg-brand-600 text-white"
-                                    : "bg-slate-100 text-slate-500",
+                              isSel ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-500",
                             )}
                           >
                             {LETTERS[i]}
@@ -331,13 +314,6 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
                       );
                     })}
                   </div>
-
-                  {expired && (
-                    <div className="mt-4 rounded-r-xl border-l-2 border-brand-500 bg-slate-50 px-3.5 py-3 text-xs leading-relaxed text-slate-600">
-                      <strong className="text-brand-700">Explication : </strong>
-                      {q.e}
-                    </div>
-                  )}
                 </motion.div>
               </AnimatePresence>
 
@@ -374,15 +350,6 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
                 Vos réponses ont été enregistrées. L'équipe RH d'IZICHANGE les analysera et vous contactera dans les
                 meilleurs délais.
               </p>
-              <div className="mx-auto mt-6 max-w-xs rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <div className="text-[11px] text-slate-400">Votre score global</div>
-                <div className="font-display text-3xl font-bold text-brand-600">
-                  {score.total}/{score.max} ({score.pct}%)
-                </div>
-                <div className="mt-1 text-[11px] text-slate-400">
-                  Bloc 1 : {score.block1}/10 · Bloc 2 : {score.block2}/12 · Bloc 3 : {score.block3}/10
-                </div>
-              </div>
               <Button variant="subtle" className="mt-6" onClick={reset}>
                 Nouveau test
               </Button>

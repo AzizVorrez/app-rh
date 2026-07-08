@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { testResults } from "@/lib/db/schema";
-import { scoreTest } from "@/lib/recruitment";
+import { scoreTest } from "@/lib/recruitment-bank";
 import { isValidEmail, normalizeEmail } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";

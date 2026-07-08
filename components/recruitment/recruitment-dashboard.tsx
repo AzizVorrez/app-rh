@@ -55,6 +55,8 @@ export function RecruitmentDashboard() {
   const [durB23, setDurB23] = useState("");
   const [durLoaded, setDurLoaded] = useState(false);
   const [savingDur, setSavingDur] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Result | null>(null);
+  const [deletingOne, setDeletingOne] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -205,6 +207,21 @@ export function RecruitmentDashboard() {
     a.href = "data:text/csv;charset=utf-8,﻿" + encodeURIComponent(csv);
     a.download = "IZICHANGE_Resultats_JT2026.csv";
     a.click();
+  }
+
+  async function confirmDeleteOne() {
+    if (!deleteTarget) return;
+    setDeletingOne(true);
+    try {
+      await api.del(`/api/admin/recrutement/${deleteTarget.id}`);
+      setResults((prev) => (prev ? prev.filter((x) => x.id !== deleteTarget.id) : prev));
+      toast("Candidat supprimé.", "success");
+      setDeleteTarget(null);
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Échec.", "error");
+    } finally {
+      setDeletingOne(false);
+    }
   }
 
   async function wipe() {
@@ -383,12 +400,13 @@ export function RecruitmentDashboard() {
                   {sortTh("block3", "B3/10", { center: true })}
                   {sortTh("total", "Total", { center: true })}
                   {sortTh("status", "Statut", { pad: "px-3" })}
+                  <th className="px-3 py-3" />
                 </tr>
               </thead>
               <tbody>
                 {view.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-5 py-10 text-center text-[13px] text-slate-400">
+                    <td colSpan={9} className="px-5 py-10 text-center text-[13px] text-slate-400">
                       Aucun candidat ne correspond aux filtres.
                     </td>
                   </tr>
@@ -418,6 +436,16 @@ export function RecruitmentDashboard() {
                             {r.status}
                           </span>
                         </td>
+                        <td className="px-3 py-2.5 text-right">
+                          <button
+                            type="button"
+                            onClick={() => setDeleteTarget(r)}
+                            aria-label={`Supprimer ${r.name}`}
+                            className="ring-focus inline-flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
                       </tr>
                     );
                   })
@@ -437,6 +465,17 @@ export function RecruitmentDashboard() {
         title="Supprimer tous les résultats ?"
         message="Tous les résultats du test de recrutement seront définitivement supprimés. Cette action est irréversible."
         confirmLabel="Tout supprimer"
+      />
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteOne}
+        loading={deletingOne}
+        danger
+        title="Supprimer ce candidat ?"
+        message={`Le résultat de ${deleteTarget?.name ?? "ce candidat"} sera définitivement supprimé. Cette action est irréversible.`}
+        confirmLabel="Supprimer"
       />
     </div>
   );
