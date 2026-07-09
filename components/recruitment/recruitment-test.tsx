@@ -180,10 +180,9 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
                 durée limitée. Répondez rapidement et honnêtement.
               </p>
 
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="mt-6 grid grid-cols-3 gap-3">
                 {[
                   { v: "32 questions", l: "3 blocs" },
-                  { v: "~45 min", l: "Durée estimée" },
                   { v: `${durations.block1} sec`, l: "Bloc 1 — par question" },
                   { v: `${durations.block23} sec`, l: "Blocs 2 & 3 — par question" },
                 ].map((c) => (

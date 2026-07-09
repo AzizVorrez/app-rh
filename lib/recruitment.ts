@@ -52,9 +52,14 @@ export interface TestDurations {
   block23: number; // secondes par question — Blocs 2 & 3
 }
 
-export function statusFor(total: number, max: number): string {
+export const DEFAULT_PASS_THRESHOLD = 75; // % minimum pour être « Admis » (configurable côté admin)
+const RESERVE_THRESHOLD = 60; // % minimum pour être « Réserve »
+
+export function statusFor(total: number, max: number, passThreshold: number = DEFAULT_PASS_THRESHOLD): string {
   const pct = Math.round((total / max) * 100);
-  return pct >= 70 ? "Admis" : pct >= 60 ? "Réserve" : "Non retenu";
+  if (pct >= passThreshold) return "Admis";
+  if (pct >= RESERVE_THRESHOLD) return "Réserve";
+  return "Non retenu";
 }
 
 export interface TestScore {

@@ -107,6 +107,7 @@ const DEFAULT_SETTINGS: Record<string, unknown> = {
   // Durées (secondes/question) du test de recrutement — modifiables depuis /admin/recrutement.
   recruitment_duration_block1: 30,
   recruitment_duration_block23: 40,
+  recruitment_pass_threshold: 75,
 };
 
 async function main() {

@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { testResults } from "@/lib/db/schema";
 import { scoreTest } from "@/lib/recruitment-bank";
+import { getRecruitmentSettings } from "@/lib/settings";
 import { isValidEmail, normalizeEmail } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Score authoritatively on the server from the submitted answers.
-    const score = scoreTest(domain, answers);
+    const { passThreshold } = await getRecruitmentSettings();
+    const score = scoreTest(domain, answers, passThreshold);
 
     await db.insert(testResults).values({
       candidateName: name,

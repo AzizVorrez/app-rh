@@ -98,7 +98,7 @@ export function buildTest(domain: Domain, durations?: TestDurations): TQ[] {
 }
 
 /** Authoritative scoring from submitted answer indices. */
-export function scoreTest(domain: Domain, answers: (number | null)[]): TestScore {
+export function scoreTest(domain: Domain, answers: (number | null)[], passThreshold?: number): TestScore {
   const qs = buildTest(domain);
   let b1 = 0;
   let b2 = 0;
@@ -108,5 +108,5 @@ export function scoreTest(domain: Domain, answers: (number | null)[]): TestScore
   for (let i = 22; i < qs.length; i++) if (answers[i] === qs[i].c) b3++;
   const total = b1 + b2 + b3;
   const max = qs.length;
-  return { block1: b1, block2: b2, block3: b3, total, max, status: statusFor(total, max), pct: Math.round((total / max) * 100) };
+  return { block1: b1, block2: b2, block3: b3, total, max, status: statusFor(total, max, passThreshold), pct: Math.round((total / max) * 100) };
 }

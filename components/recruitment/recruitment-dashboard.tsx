@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/ui/modal";
 import { Button, CenteredSpinner, EmptyState, GlassCard, Input, Label, Select } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/api";
-import { DOMAIN_LABELS, type Domain } from "@/lib/recruitment";
+import { DEFAULT_PASS_THRESHOLD, DOMAIN_LABELS, statusFor, type Domain } from "@/lib/recruitment";
 import { cn, formatDateFR } from "@/lib/utils";
 
 interface Result {
@@ -55,6 +55,8 @@ export function RecruitmentDashboard() {
   const [durB23, setDurB23] = useState("");
   const [durLoaded, setDurLoaded] = useState(false);
   const [savingDur, setSavingDur] = useState(false);
+  const [passThr, setPassThr] = useState("");
+  const [passThreshold, setPassThreshold] = useState(DEFAULT_PASS_THRESHOLD);
   const [deleteTarget, setDeleteTarget] = useState<Result | null>(null);
   const [deletingOne, setDeletingOne] = useState(false);
 
@@ -70,11 +72,13 @@ export function RecruitmentDashboard() {
 
   const loadDurations = useCallback(async () => {
     try {
-      const s = await api.get<{ durationBlock1: number; durationBlock23: number }>(
+      const s = await api.get<{ durationBlock1: number; durationBlock23: number; passThreshold: number }>(
         "/api/admin/recrutement/settings",
       );
       setDurB1(String(s.durationBlock1));
       setDurB23(String(s.durationBlock23));
+      setPassThr(String(s.passThreshold));
+      setPassThreshold(s.passThreshold);
       setDurLoaded(true);
     } catch {
       // silencieux : les réglages ne bloquent pas l'affichage des résultats
@@ -86,19 +90,24 @@ export function RecruitmentDashboard() {
     loadDurations();
   }, [load, loadDurations]);
 
+  // Statut recalculé en direct selon le seuil courant (équité sur toute la campagne).
+  const computed = useMemo(
+    () => (results ?? []).map((r) => ({ ...r, status: statusFor(r.total, r.max, passThreshold) })),
+    [results, passThreshold],
+  );
+
   const stats = useMemo(() => {
-    const r = results ?? [];
-    const n = r.length;
-    const admis = r.filter((x) => x.status === "Admis").length;
-    const reserve = r.filter((x) => x.status === "Réserve").length;
-    const avg = n ? Math.round(r.reduce((s, x) => s + Math.round((x.total / x.max) * 100), 0) / n) : 0;
+    const n = computed.length;
+    const admis = computed.filter((x) => x.status === "Admis").length;
+    const reserve = computed.filter((x) => x.status === "Réserve").length;
+    const avg = n ? Math.round(computed.reduce((s, x) => s + Math.round((x.total / x.max) * 100), 0) / n) : 0;
     return { n, admis, reserve, avg };
-  }, [results]);
+  }, [computed]);
 
   // Filtrage (recherche + domaine + statut) puis tri — tout côté client (dataset petit, déjà chargé).
   const view = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const rows = (results ?? []).filter((r) => {
+    const rows = computed.filter((r) => {
       if (domainFilter !== "all" && r.domain !== domainFilter) return false;
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
       if (q && !`${r.name} ${r.email}`.toLowerCase().includes(q)) return false;
@@ -124,7 +133,7 @@ export function RecruitmentDashboard() {
       }
     };
     return rows.sort((a, b) => dir * cmp(a, b));
-  }, [results, search, domainFilter, statusFilter, sort]);
+  }, [computed, search, domainFilter, statusFilter, sort]);
 
   function toggleSort(key: SortKey) {
     setSort((s) =>
@@ -163,13 +172,22 @@ export function RecruitmentDashboard() {
   async function saveDurations() {
     const b1 = Number(durB1);
     const b23 = Number(durB23);
+    const thr = Number(passThr);
     if (![b1, b23].every((n) => Number.isInteger(n) && n >= 5 && n <= 600)) {
       return toast("Durées invalides (entier entre 5 et 600 s).", "error");
     }
+    if (!Number.isInteger(thr) || thr < 1 || thr > 100) {
+      return toast("Seuil de réussite invalide (entier entre 1 et 100).", "error");
+    }
     setSavingDur(true);
     try {
-      await api.put("/api/admin/recrutement/settings", { durationBlock1: b1, durationBlock23: b23 });
-      toast("Durées enregistrées.", "success");
+      await api.put("/api/admin/recrutement/settings", {
+        durationBlock1: b1,
+        durationBlock23: b23,
+        passThreshold: thr,
+      });
+      setPassThreshold(thr);
+      toast("Réglages enregistrés.", "success");
     } catch (e) {
       toast(e instanceof Error ? e.message : "Échec.", "error");
     } finally {
@@ -276,7 +294,7 @@ export function RecruitmentDashboard() {
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { v: stats.n, l: "Candidats", c: "text-ink" },
-          { v: stats.admis, l: "Admis ≥ 70%", c: "text-accent-600" },
+          { v: stats.admis, l: `Admis ≥ ${passThreshold}%`, c: "text-accent-600" },
           { v: stats.reserve, l: "En réserve", c: "text-amber-600" },
           { v: `${stats.avg}%`, l: "Score moyen", c: "text-brand-600" },
         ].map((s, i) => (
@@ -297,9 +315,9 @@ export function RecruitmentDashboard() {
       <GlassCard className="mb-6 p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h3 className="font-display text-sm font-semibold text-ink">Durées du test</h3>
+            <h3 className="font-display text-sm font-semibold text-ink">Réglages du test</h3>
             <p className="text-[11px] text-slate-400">
-              Temps par question (5–600 s). S'applique aux tests démarrés après enregistrement.
+              Durées par question (nouveaux tests) · seuil de réussite appliqué à tous les résultats.
             </p>
           </div>
           <div className="flex flex-wrap items-end gap-3">
@@ -324,6 +342,18 @@ export function RecruitmentDashboard() {
                 max={600}
                 value={durB23}
                 onChange={(e) => setDurB23(e.target.value)}
+                className="w-24"
+              />
+            </div>
+            <div>
+              <Label htmlFor="passThr">Seuil réussite (%)</Label>
+              <Input
+                id="passThr"
+                type="number"
+                min={1}
+                max={100}
+                value={passThr}
+                onChange={(e) => setPassThr(e.target.value)}
                 className="w-24"
               />
             </div>
