@@ -141,6 +141,40 @@ export const testResults = pgTable(
 
 export type TestResultRow = typeof testResults.$inferSelect;
 
+/** Banque de questions du test de recrutement (gérée depuis le dashboard admin). */
+export const recruitmentDomainEnum = pgEnum("recruitment_domain", [
+  "ops",
+  "graphiste",
+  "crm",
+  "social",
+  "cyber",
+  "dev",
+]);
+
+export const recruitmentQuestions = pgTable(
+  "recruitment_questions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    block: integer("block").notNull(), // 1, 2 (partagés) ou 3 (par domaine)
+    domain: recruitmentDomainEnum("domain"), // null pour blocs 1 & 2 ; requis pour bloc 3
+    section: text("section").notNull().default(""),
+    text: text("text").notNull(),
+    options: jsonb("options").$type<string[]>().notNull().default([]),
+    correctIndex: integer("correct_index").notNull().default(0),
+    explanation: text("explanation").notNull().default(""),
+    position: integer("position").notNull().default(0),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    blockIdx: index("recruitment_questions_block_idx").on(t.block),
+    domainIdx: index("recruitment_questions_domain_idx").on(t.domain),
+    positionIdx: index("recruitment_questions_position_idx").on(t.position),
+  }),
+);
+
+export type RecruitmentQuestionRow = typeof recruitmentQuestions.$inferSelect;
+
 export type Department = typeof departments.$inferSelect;
 export type Theme = typeof themes.$inferSelect;
 export type Question = typeof questions.$inferSelect;

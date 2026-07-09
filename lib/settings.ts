@@ -55,7 +55,7 @@ export async function getSurveySettings(): Promise<SurveySettings> {
 
 /* ─── Recruitment test settings (durées du test psychotechnique) ─────── */
 
-const RECRUITMENT_DEFAULTS = { durationBlock1: 30, durationBlock23: 40, passThreshold: 75 } as const;
+const RECRUITMENT_DEFAULTS = { durationBlock1: 30, durationBlock23: 40, passThreshold: 75, enabled: true } as const;
 const DURATION_MIN = 5;
 const DURATION_MAX = 600;
 
@@ -63,6 +63,7 @@ export interface RecruitmentSettings {
   durationBlock1: number;
   durationBlock23: number;
   passThreshold: number; // % minimum pour être « Admis »
+  enabled: boolean; // test ouvert (candidats peuvent passer) ou fermé
 }
 
 /** Coerce + clamp une durée stockée (jsonb) vers un entier de secondes valide. */
@@ -85,6 +86,7 @@ export async function getRecruitmentSettings(): Promise<RecruitmentSettings> {
     durationBlock1: clampDuration(all.recruitment_duration_block1, RECRUITMENT_DEFAULTS.durationBlock1),
     durationBlock23: clampDuration(all.recruitment_duration_block23, RECRUITMENT_DEFAULTS.durationBlock23),
     passThreshold: clampPercent(all.recruitment_pass_threshold, RECRUITMENT_DEFAULTS.passThreshold),
+    enabled: all.recruitment_enabled === undefined ? RECRUITMENT_DEFAULTS.enabled : Boolean(all.recruitment_enabled),
   };
 }
 

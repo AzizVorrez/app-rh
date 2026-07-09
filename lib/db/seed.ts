@@ -1,7 +1,8 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { db } from "./index";
-import { departments, themes, questions, settings } from "./schema";
+import { departments, themes, questions, settings, recruitmentQuestions } from "./schema";
+import { SEED_QUESTIONS } from "../recruitment-data";
 import type { QuestionType } from "../types";
 
 /* ─── Reference data (mirrors the original IZICHANGE 2026 survey) ─────── */
@@ -108,6 +109,7 @@ const DEFAULT_SETTINGS: Record<string, unknown> = {
   recruitment_duration_block1: 30,
   recruitment_duration_block23: 40,
   recruitment_pass_threshold: 75,
+  recruitment_enabled: true,
 };
 
 async function main() {
@@ -174,6 +176,27 @@ async function main() {
     console.log(`  ✓ ${toInsert.length} settings`);
   } else {
     console.log("  • settings already present — skipped");
+  }
+
+  // ── Recruitment questions (seed once if empty) ──
+  const existingRQ = await db.select({ id: recruitmentQuestions.id }).from(recruitmentQuestions);
+  if (existingRQ.length === 0) {
+    await db.insert(recruitmentQuestions).values(
+      SEED_QUESTIONS.map((q, i) => ({
+        block: q.block,
+        domain: q.domain,
+        section: q.section,
+        text: q.text,
+        options: q.options,
+        correctIndex: q.correctIndex,
+        explanation: q.explanation,
+        position: i,
+        active: true,
+      })),
+    );
+    console.log(`  ✓ ${SEED_QUESTIONS.length} recruitment questions`);
+  } else {
+    console.log(`  • recruitment questions already present (${existingRQ.length}) — skipped`);
   }
 
   console.log("✅ Seed complete.");

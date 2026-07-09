@@ -16,7 +16,13 @@ type Phase = "welcome" | "quiz" | "thanks";
 const LETTERS = ["A", "B", "C", "D"];
 const blockOf = (i: number) => (i < 10 ? 0 : i < 22 ? 1 : 2);
 
-export function RecruitmentTest({ durations }: { durations: TestDurations }) {
+export function RecruitmentTest({
+  durations,
+  counts,
+}: {
+  durations: TestDurations;
+  counts: Record<Domain, number>;
+}) {
   const { toast } = useToast();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [name, setName] = useState("");
@@ -182,7 +188,7 @@ export function RecruitmentTest({ durations }: { durations: TestDurations }) {
 
               <div className="mt-6 grid grid-cols-3 gap-3">
                 {[
-                  { v: "32 questions", l: "3 blocs" },
+                  { v: `${counts[domain ?? "ops"]} questions`, l: "3 blocs" },
                   { v: `${durations.block1} sec`, l: "Bloc 1 — par question" },
                   { v: `${durations.block23} sec`, l: "Blocs 2 & 3 — par question" },
                 ].map((c) => (

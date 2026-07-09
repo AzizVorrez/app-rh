@@ -16,6 +16,7 @@ const schema = z.object({
   durationBlock1: z.number().int().min(5).max(600).optional(),
   durationBlock23: z.number().int().min(5).max(600).optional(),
   passThreshold: z.number().int().min(1).max(100).optional(),
+  enabled: z.boolean().optional(),
 });
 
 export async function PUT(req: NextRequest) {
@@ -28,6 +29,7 @@ export async function PUT(req: NextRequest) {
   if (d.durationBlock1 !== undefined) await setSetting("recruitment_duration_block1", d.durationBlock1);
   if (d.durationBlock23 !== undefined) await setSetting("recruitment_duration_block23", d.durationBlock23);
   if (d.passThreshold !== undefined) await setSetting("recruitment_pass_threshold", d.passThreshold);
+  if (d.enabled !== undefined) await setSetting("recruitment_enabled", d.enabled);
 
   return NextResponse.json({ ok: true, settings: await getRecruitmentSettings() });
 }

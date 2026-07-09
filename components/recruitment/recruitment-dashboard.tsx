@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Logo } from "@/components/brand/logo";
 import { ConfirmDialog } from "@/components/ui/modal";
-import { Button, CenteredSpinner, EmptyState, GlassCard, Input, Label, Select } from "@/components/ui/primitives";
+import { Button, CenteredSpinner, EmptyState, GlassCard, Input, Select } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/api";
 import { DEFAULT_PASS_THRESHOLD, DOMAIN_LABELS, statusFor, type Domain } from "@/lib/recruitment";
@@ -41,7 +41,7 @@ type SortDir = "asc" | "desc";
 // Colonnes qui démarrent en décroissant au 1er clic (meilleur score / plus récent / meilleur statut en tête).
 const DESC_FIRST: SortKey[] = ["date", "block1", "block2", "block3", "total", "status"];
 
-export function RecruitmentDashboard() {
+export function RecruitmentDashboard({ embedded = false }: { embedded?: boolean } = {}) {
   const router = useRouter();
   const { toast } = useToast();
   const [results, setResults] = useState<Result[] | null>(null);
@@ -51,11 +51,6 @@ export function RecruitmentDashboard() {
   const [search, setSearch] = useState("");
   const [domainFilter, setDomainFilter] = useState<Domain | "all">("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [durB1, setDurB1] = useState("");
-  const [durB23, setDurB23] = useState("");
-  const [durLoaded, setDurLoaded] = useState(false);
-  const [savingDur, setSavingDur] = useState(false);
-  const [passThr, setPassThr] = useState("");
   const [passThreshold, setPassThreshold] = useState(DEFAULT_PASS_THRESHOLD);
   const [deleteTarget, setDeleteTarget] = useState<Result | null>(null);
   const [deletingOne, setDeletingOne] = useState(false);
@@ -70,25 +65,20 @@ export function RecruitmentDashboard() {
     }
   }, [router, toast]);
 
-  const loadDurations = useCallback(async () => {
+  // Seuil de réussite courant : lu en lecture seule pour recalculer les statuts affichés.
+  const loadThreshold = useCallback(async () => {
     try {
-      const s = await api.get<{ durationBlock1: number; durationBlock23: number; passThreshold: number }>(
-        "/api/admin/recrutement/settings",
-      );
-      setDurB1(String(s.durationBlock1));
-      setDurB23(String(s.durationBlock23));
-      setPassThr(String(s.passThreshold));
+      const s = await api.get<{ passThreshold: number }>("/api/admin/recrutement/settings");
       setPassThreshold(s.passThreshold);
-      setDurLoaded(true);
     } catch {
-      // silencieux : les réglages ne bloquent pas l'affichage des résultats
+      // silencieux : le seuil par défaut reste appliqué
     }
   }, []);
 
   useEffect(() => {
     load();
-    loadDurations();
-  }, [load, loadDurations]);
+    loadThreshold();
+  }, [load, loadThreshold]);
 
   // Statut recalculé en direct selon le seuil courant (équité sur toute la campagne).
   const computed = useMemo(
@@ -169,32 +159,6 @@ export function RecruitmentDashboard() {
     </th>
   );
 
-  async function saveDurations() {
-    const b1 = Number(durB1);
-    const b23 = Number(durB23);
-    const thr = Number(passThr);
-    if (![b1, b23].every((n) => Number.isInteger(n) && n >= 5 && n <= 600)) {
-      return toast("Durées invalides (entier entre 5 et 600 s).", "error");
-    }
-    if (!Number.isInteger(thr) || thr < 1 || thr > 100) {
-      return toast("Seuil de réussite invalide (entier entre 1 et 100).", "error");
-    }
-    setSavingDur(true);
-    try {
-      await api.put("/api/admin/recrutement/settings", {
-        durationBlock1: b1,
-        durationBlock23: b23,
-        passThreshold: thr,
-      });
-      setPassThreshold(thr);
-      toast("Réglages enregistrés.", "success");
-    } catch (e) {
-      toast(e instanceof Error ? e.message : "Échec.", "error");
-    } finally {
-      setSavingDur(false);
-    }
-  }
-
   async function logout() {
     await api.post("/api/admin/logout").catch(() => {});
     router.replace("/admin/login");
@@ -257,7 +221,9 @@ export function RecruitmentDashboard() {
   }
 
   if (!results) {
-    return (
+    return embedded ? (
+      <CenteredSpinner label="Chargement des résultats…" />
+    ) : (
       <div className="flex min-h-screen items-center justify-center">
         <CenteredSpinner label="Chargement des résultats…" />
       </div>
@@ -265,28 +231,32 @@ export function RecruitmentDashboard() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+    <div className={cn(!embedded && "mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8")}>
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
-          <Logo />
-          <div className="hidden border-l border-slate-200 pl-4 sm:block">
+          {!embedded && <Logo />}
+          <div className={cn(embedded ? "block" : "hidden border-l border-slate-200 pl-4 sm:block")}>
             <h1 className="font-display text-lg font-bold text-ink">Recrutement — Jeune Talent 2026</h1>
             <p className="text-[11px] text-slate-400">Résultats du test psychotechnique · Confidentiel</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            href="/admin"
-            className="ring-focus inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-slate-500 transition-colors hover:text-slate-900"
-          >
-            <ArrowLeft className="h-4 w-4" /> Engagement
-          </Link>
+          {!embedded && (
+            <Link
+              href="/admin"
+              className="ring-focus inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold text-slate-500 transition-colors hover:text-slate-900"
+            >
+              <ArrowLeft className="h-4 w-4" /> Engagement
+            </Link>
+          )}
           <Button variant="outline" size="sm" onClick={exportCsv}>
             <Download className="h-4 w-4" /> CSV
           </Button>
-          <Button variant="ghost" size="sm" onClick={logout}>
-            <LogOut className="h-4 w-4" /> Déconnexion
-          </Button>
+          {!embedded && (
+            <Button variant="ghost" size="sm" onClick={logout}>
+              <LogOut className="h-4 w-4" /> Déconnexion
+            </Button>
+          )}
         </div>
       </header>
 
@@ -310,59 +280,6 @@ export function RecruitmentDashboard() {
           </motion.div>
         ))}
       </div>
-
-      {/* Réglages : durées du test */}
-      <GlassCard className="mb-6 p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h3 className="font-display text-sm font-semibold text-ink">Réglages du test</h3>
-            <p className="text-[11px] text-slate-400">
-              Durées par question (nouveaux tests) · seuil de réussite appliqué à tous les résultats.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-end gap-3">
-            <div>
-              <Label htmlFor="durB1">Bloc 1 (s)</Label>
-              <Input
-                id="durB1"
-                type="number"
-                min={5}
-                max={600}
-                value={durB1}
-                onChange={(e) => setDurB1(e.target.value)}
-                className="w-24"
-              />
-            </div>
-            <div>
-              <Label htmlFor="durB23">Blocs 2 &amp; 3 (s)</Label>
-              <Input
-                id="durB23"
-                type="number"
-                min={5}
-                max={600}
-                value={durB23}
-                onChange={(e) => setDurB23(e.target.value)}
-                className="w-24"
-              />
-            </div>
-            <div>
-              <Label htmlFor="passThr">Seuil réussite (%)</Label>
-              <Input
-                id="passThr"
-                type="number"
-                min={1}
-                max={100}
-                value={passThr}
-                onChange={(e) => setPassThr(e.target.value)}
-                className="w-24"
-              />
-            </div>
-            <Button size="sm" onClick={saveDurations} loading={savingDur} disabled={!durLoaded}>
-              Enregistrer
-            </Button>
-          </div>
-        </div>
-      </GlassCard>
 
       {/* Table */}
       {results.length === 0 ? (

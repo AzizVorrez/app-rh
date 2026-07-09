@@ -12,11 +12,11 @@ export async function GET(req: NextRequest) {
   if (!isDomain(domain)) {
     return NextResponse.json({ error: "Domaine invalide." }, { status: 400 });
   }
-  const { durationBlock1, durationBlock23 } = await getRecruitmentSettings();
-  // On construit avec la banque serveur, puis on ne garde que les champs publics.
-  const questions: PublicTQ[] = buildTest(domain, {
-    block1: durationBlock1,
-    block23: durationBlock23,
-  }).map(({ s, t, o, sec }) => ({ s, t, o, sec }));
+  const { durationBlock1, durationBlock23, enabled } = await getRecruitmentSettings();
+  if (!enabled) {
+    return NextResponse.json({ error: "Le test de recrutement est actuellement fermé." }, { status: 403 });
+  }
+  // buildTest lit la banque serveur et ne renvoie que les champs publics (sans bonnes réponses).
+  const questions: PublicTQ[] = await buildTest(domain, { block1: durationBlock1, block23: durationBlock23 });
   return NextResponse.json({ questions });
 }

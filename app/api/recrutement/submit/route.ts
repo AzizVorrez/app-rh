@@ -14,8 +14,8 @@ const schema = z.object({
   name: z.string().trim().min(1).max(120),
   // Même règle que le client (isValidEmail) — cohérence welcome ↔ submit, pas de 400 après le test.
   email: z.string().trim().max(160).refine(isValidEmail, "Email invalide."),
-  domain: z.enum(["ops", "com", "cyber", "dev"]),
-  answers: z.array(z.number().int().nullable()).max(60),
+  domain: z.enum(["ops", "graphiste", "crm", "social", "cyber", "dev"]),
+  answers: z.array(z.number().int().nullable()).max(200),
 });
 
 const ALREADY = "Vous avez déjà passé ce test avec cet email.";
@@ -40,8 +40,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Score authoritatively on the server from the submitted answers.
-    const { passThreshold } = await getRecruitmentSettings();
-    const score = scoreTest(domain, answers, passThreshold);
+    const { passThreshold, enabled } = await getRecruitmentSettings();
+    if (!enabled) {
+      return NextResponse.json({ error: "Le test de recrutement est actuellement fermé." }, { status: 403 });
+    }
+    const score = await scoreTest(domain, answers, passThreshold);
 
     await db.insert(testResults).values({
       candidateName: name,

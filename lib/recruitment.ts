@@ -7,7 +7,7 @@
  * vivent dans `recruitment-bank.ts` (server-only) pour ne pas fuiter côté client.
  */
 
-export type Domain = "ops" | "com" | "cyber" | "dev";
+export type Domain = "ops" | "graphiste" | "crm" | "social" | "cyber" | "dev";
 
 /** Question complète (avec bonne réponse `c` + explication `e`) — usage serveur uniquement. */
 export interface TQ {
@@ -29,16 +29,20 @@ export interface PublicTQ {
 
 export const DOMAIN_LABELS: Record<Domain, string> = {
   ops: "Opérations",
-  com: "Communication",
+  graphiste: "Graphiste-Monteur vidéo",
+  crm: "CRM & Relation Client",
+  social: "Social Media & Content",
   cyber: "IT — Cybersécurité",
   dev: "IT — Développement",
 };
 
 export const DOMAIN_OPTIONS: { id: Domain; label: string; sub: string }[] = [
   { id: "ops", label: "Opérations", sub: "Customer Support Officer" },
-  { id: "com", label: "Communication & Marketing", sub: "Graphiste · CRM · Social Media" },
-  { id: "cyber", label: "Technologie — Cybersécurité", sub: "Analyste Cybersécurité" },
-  { id: "dev", label: "Technologie — Développement", sub: "Architecture Logiciel · Développeur" },
+  { id: "graphiste", label: "Graphiste-Monteur vidéo", sub: "Design · Production audiovisuelle" },
+  { id: "crm", label: "CRM & Relation Client", sub: "Chargé(e) CRM & Relation Client" },
+  { id: "social", label: "Social Media & Content", sub: "Social Media & Content Creator" },
+  { id: "cyber", label: "IT — Cybersécurité", sub: "Analyste Cybersécurité" },
+  { id: "dev", label: "IT — Développement", sub: "Développeur · Architecture Logiciel" },
 ];
 
 export const BLOCK_LABELS = [
@@ -73,5 +77,7 @@ export interface TestScore {
 }
 
 export function isDomain(v: unknown): v is Domain {
-  return v === "ops" || v === "com" || v === "cyber" || v === "dev";
+  return (
+    v === "ops" || v === "graphiste" || v === "crm" || v === "social" || v === "cyber" || v === "dev"
+  );
 }

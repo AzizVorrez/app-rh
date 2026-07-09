@@ -3,16 +3,17 @@
 import { motion } from "framer-motion";
 import {
   BarChart3,
+  ChevronDown,
   Download,
   FileText,
   GraduationCap,
+  LayoutDashboard,
   Lightbulb,
   LogOut,
   MessageSquareText,
   Settings2,
   Users,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Logo } from "@/components/brand/logo";
@@ -28,6 +29,8 @@ import { RecommendationsTab } from "./recommendations-tab";
 import { ScoresTab } from "./scores-tab";
 import { SettingsTab } from "./settings-tab";
 import { StatGrid } from "./stat-grid";
+import { RecruitmentDashboard } from "@/components/recruitment/recruitment-dashboard";
+import { RecruitmentSettings } from "@/components/recruitment/recruitment-settings";
 
 const TABS = [
   { key: "scores", label: "Scores", icon: BarChart3 },
@@ -38,9 +41,15 @@ const TABS = [
 ] as const;
 type TabKey = (typeof TABS)[number]["key"];
 
-export function AdminDashboard() {
+export function AdminDashboard({ initialView }: { initialView?: "recrutement" } = {}) {
   const router = useRouter();
   const { toast } = useToast();
+  const [view, setView] = useState<"engagement" | "recrutement">(
+    initialView === "recrutement" ? "recrutement" : "engagement",
+  );
+  const [engagementOpen, setEngagementOpen] = useState(initialView !== "recrutement");
+  const [recrutementOpen, setRecrutementOpen] = useState(initialView === "recrutement");
+  const [recTab, setRecTab] = useState<"candidats" | "params">("candidats");
   const [tab, setTab] = useState<TabKey>("scores");
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [config, setConfig] = useState<AdminConfig | null>(null);
@@ -86,7 +95,7 @@ export function AdminDashboard() {
     exportPDF(stats);
   }
 
-  if (loading) {
+  if (loading && view === "engagement") {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <CenteredSpinner label="Chargement du tableau de bord…" />
@@ -104,15 +113,80 @@ export function AdminDashboard() {
           <Logo subtitle="Espace RH" />
         </div>
         <nav className="mt-8 flex flex-1 flex-col gap-1">
-          {TABS.map((t) => (
-            <NavItem key={t.key} active={tab === t.key} icon={<t.icon className="h-[18px] w-[18px]" />} label={t.label} onClick={() => setTab(t.key)} />
-          ))}
-          <Link
-            href="/admin/recrutement"
-            className="ring-focus mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-ink"
+          {/* Engagement — dropdown regroupant les sections d'enquête */}
+          <button
+            onClick={() => {
+              setEngagementOpen((o) => !o);
+              setView("engagement");
+            }}
+            className={cn(
+              "ring-focus flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
+              view === "engagement"
+                ? "font-semibold text-ink"
+                : "font-medium text-slate-600 hover:bg-slate-100 hover:text-ink",
+            )}
           >
-            <GraduationCap className="h-[18px] w-[18px]" /> Recrutement
-          </Link>
+            <span className="flex items-center gap-3">
+              <LayoutDashboard className="h-[18px] w-[18px]" /> Engagement
+            </span>
+            <ChevronDown className={cn("h-4 w-4 transition-transform", engagementOpen && "rotate-180")} />
+          </button>
+          {engagementOpen && (
+            <div className="ml-3 flex flex-col gap-1 border-l border-slate-200 pl-2">
+              {TABS.map((t) => (
+                <NavItem
+                  key={t.key}
+                  active={view === "engagement" && tab === t.key}
+                  icon={<t.icon className="h-[18px] w-[18px]" />}
+                  label={t.label}
+                  onClick={() => {
+                    setView("engagement");
+                    setTab(t.key);
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          {/* Recrutement — dropdown : Candidats + Paramètres */}
+          <button
+            onClick={() => {
+              setRecrutementOpen((o) => !o);
+              setView("recrutement");
+            }}
+            className={cn(
+              "ring-focus flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
+              view === "recrutement"
+                ? "font-semibold text-ink"
+                : "font-medium text-slate-600 hover:bg-slate-100 hover:text-ink",
+            )}
+          >
+            <span className="flex items-center gap-3">
+              <GraduationCap className="h-[18px] w-[18px]" /> Recrutement
+            </span>
+            <ChevronDown className={cn("h-4 w-4 transition-transform", recrutementOpen && "rotate-180")} />
+          </button>
+          {recrutementOpen && (
+            <div className="ml-3 flex flex-col gap-1 border-l border-slate-200 pl-2">
+              <NavItem
+                active={view === "recrutement" && recTab === "candidats"}
+                icon={<Users className="h-[18px] w-[18px]" />}
+                label="Candidats"
+                onClick={() => {
+                  setView("recrutement");
+                  setRecTab("candidats");
+                }}
+              />
+              <NavItem
+                active={view === "recrutement" && recTab === "params"}
+                icon={<Settings2 className="h-[18px] w-[18px]" />}
+                label="Paramètres"
+                onClick={() => {
+                  setView("recrutement");
+                  setRecTab("params");
+                }}
+              />
+            </div>
+          )}
         </nav>
         <div className="border-t border-slate-200 pt-3">
           <button
@@ -138,19 +212,60 @@ export function AdminDashboard() {
             {TABS.map((t) => (
               <button
                 key={t.key}
-                onClick={() => setTab(t.key)}
+                onClick={() => {
+                  setView("engagement");
+                  setTab(t.key);
+                }}
                 className={cn(
                   "whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors",
-                  tab === t.key ? "bg-brand-50 text-brand-700" : "text-slate-500 hover:bg-slate-100",
+                  view === "engagement" && tab === t.key
+                    ? "bg-brand-50 text-brand-700"
+                    : "text-slate-500 hover:bg-slate-100",
                 )}
               >
                 {t.label}
               </button>
             ))}
+            <button
+              onClick={() => {
+                setView("recrutement");
+                setRecTab("candidats");
+              }}
+              className={cn(
+                "whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                view === "recrutement" && recTab === "candidats"
+                  ? "bg-brand-50 text-brand-700"
+                  : "text-slate-500 hover:bg-slate-100",
+              )}
+            >
+              Candidats
+            </button>
+            <button
+              onClick={() => {
+                setView("recrutement");
+                setRecTab("params");
+              }}
+              className={cn(
+                "whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                view === "recrutement" && recTab === "params"
+                  ? "bg-brand-50 text-brand-700"
+                  : "text-slate-500 hover:bg-slate-100",
+              )}
+            >
+              Recrut. · Réglages
+            </button>
           </div>
         </div>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          {view === "recrutement" ? (
+            recTab === "params" ? (
+              <RecruitmentSettings />
+            ) : (
+              <RecruitmentDashboard embedded />
+            )
+          ) : (
+            <>
           {/* Toolbar */}
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -191,6 +306,8 @@ export function AdminDashboard() {
               />
             )}
           </motion.div>
+            </>
+          )}
         </main>
       </div>
     </div>
