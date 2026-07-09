@@ -1,8 +1,8 @@
 import "server-only";
-import { and, asc, eq, isNull, or } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, or } from "drizzle-orm";
 import { db } from "./db";
 import { recruitmentQuestions } from "./db/schema";
-import { statusFor, type Domain, type PublicTQ, type TestDurations, type TestScore } from "./recruitment";
+import { computeScore, type Domain, type PublicTQ, type TestDurations, type TestScore } from "./recruitment";
 
 /**
  * Cœur du test de recrutement — SERVEUR UNIQUEMENT.
@@ -11,6 +11,7 @@ import { statusFor, type Domain, type PublicTQ, type TestDurations, type TestSco
  */
 
 interface ScoringQuestion {
+  id: string;
   block: number;
   section: string;
   text: string;
@@ -20,8 +21,7 @@ interface ScoringQuestion {
 
 /**
  * Questions actives d'un test pour un domaine : blocs 1 & 2 (partagés, domaine null)
- * + bloc 3 du domaine choisi. Ordre déterministe (block, position) — identique pour
- * l'affichage (buildTest) et le scoring (scoreTest) → alignement des réponses garanti.
+ * + bloc 3 du domaine choisi. Ordre déterministe (block, position).
  */
 async function getQuestions(domain: Domain): Promise<ScoringQuestion[]> {
   const rows = await db
@@ -35,6 +35,7 @@ async function getQuestions(domain: Domain): Promise<ScoringQuestion[]> {
     )
     .orderBy(asc(recruitmentQuestions.block), asc(recruitmentQuestions.position));
   return rows.map((r) => ({
+    id: r.id,
     block: r.block,
     section: r.section,
     text: r.text,
@@ -43,10 +44,11 @@ async function getQuestions(domain: Domain): Promise<ScoringQuestion[]> {
   }));
 }
 
-/** Questions exposées au candidat (sans bonne réponse), avec le temps par bloc. */
+/** Questions exposées au candidat (sans bonne réponse), avec le temps par bloc + leur id. */
 export async function buildTest(domain: Domain, durations?: TestDurations): Promise<PublicTQ[]> {
   const qs = await getQuestions(domain);
   return qs.map((q) => ({
+    id: q.id,
     s: q.section,
     t: q.text,
     o: q.options,
@@ -69,25 +71,47 @@ export async function getDomainQuestionCounts(): Promise<Record<Domain, number>>
   return out;
 }
 
-/** Notation autoritaire côté serveur à partir des réponses soumises. */
+/**
+ * Notation autoritaire côté serveur.
+ * Si `questionIds` est fourni (snapshot des questions réellement vues par le candidat),
+ * on note contre CES questions précises, par id — robuste au réordonnancement / ajout /
+ * suppression survenus entre le chargement du test et la soumission. Les questions
+ * supprimées entre-temps sont ignorées (retirées de la note ET du total).
+ */
 export async function scoreTest(
   domain: Domain,
   answers: (number | null)[],
   passThreshold?: number,
+  questionIds?: string[],
 ): Promise<TestScore> {
+  if (questionIds && questionIds.length > 0) {
+    const rows = await db
+      .select({
+        id: recruitmentQuestions.id,
+        block: recruitmentQuestions.block,
+        correctIndex: recruitmentQuestions.correctIndex,
+      })
+      .from(recruitmentQuestions)
+      .where(inArray(recruitmentQuestions.id, questionIds));
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    // Conserver l'alignement answers[i] ↔ questionIds[i], en filtrant les questions absentes.
+    const valid = questionIds
+      .map((id, i) => ({ q: byId.get(id), a: answers[i] ?? null }))
+      .filter((p): p is { q: { id: string; block: number; correctIndex: number }; a: number | null } =>
+        Boolean(p.q),
+      );
+    return computeScore(
+      valid.map((p) => ({ block: p.q.block, correctIndex: p.q.correctIndex })),
+      valid.map((p) => p.a),
+      passThreshold,
+    );
+  }
+
+  // Fallback (client sans snapshot) : jeu de questions courant du domaine.
   const qs = await getQuestions(domain);
-  let b1 = 0;
-  let b2 = 0;
-  let b3 = 0;
-  qs.forEach((q, i) => {
-    if (answers[i] === q.correctIndex) {
-      if (q.block === 1) b1++;
-      else if (q.block === 2) b2++;
-      else b3++;
-    }
-  });
-  const total = b1 + b2 + b3;
-  const max = qs.length;
-  const pct = max > 0 ? Math.round((total / max) * 100) : 0;
-  return { block1: b1, block2: b2, block3: b3, total, max, status: statusFor(total, max, passThreshold), pct };
+  return computeScore(
+    qs.map((q) => ({ block: q.block, correctIndex: q.correctIndex })),
+    answers,
+    passThreshold,
+  );
 }

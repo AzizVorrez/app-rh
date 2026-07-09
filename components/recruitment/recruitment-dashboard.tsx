@@ -184,7 +184,13 @@ export function RecruitmentDashboard({ embedded = false }: { embedded?: boolean 
         r.status,
       ]);
     }
-    const csv = rows.map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    // Neutralise l'injection de formule (Excel/Sheets) : un champ candidat-contrôlé
+    // (nom, email) commençant par = + - @ ou tab/CR est préfixé d'une apostrophe.
+    const csvCell = (v: string | number) => {
+      const s = /^[=+\-@\t\r]/.test(String(v)) ? `'${v}` : String(v);
+      return `"${s.replace(/"/g, '""')}"`;
+    };
+    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = "data:text/csv;charset=utf-8,﻿" + encodeURIComponent(csv);
     a.download = "IZICHANGE_Resultats_JT2026.csv";

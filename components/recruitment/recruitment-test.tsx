@@ -129,6 +129,7 @@ export function RecruitmentTest({
         email: email.trim(),
         domain,
         answers,
+        questionIds: qs.map((q) => q.id),
       });
       setScore(res.score);
       setPhase("thanks");
