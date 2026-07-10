@@ -353,8 +353,7 @@ export function RecruitmentTest({
               </motion.div>
               <h1 className="font-display text-2xl font-bold text-ink">Test soumis avec succès</h1>
               <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
-                Vos réponses ont été enregistrées. L'équipe RH d'IZICHANGE les analysera et vous contactera dans les
-                meilleurs délais.
+                Vos réponses ont été enregistrées. L'équipe RH de IZICHANGE les analysera et vous contactera si vous êtes éligible pour la suite du processus.
               </p>
               <Button variant="subtle" className="mt-6" onClick={reset}>
                 Nouveau test
